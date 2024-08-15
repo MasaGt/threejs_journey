@@ -11,31 +11,41 @@ const scene = new THREE.Scene();
  */
 
 const helper = new THREE.AxesHelper(2);
-// scene.add(helper);
+scene.add(helper);
 
 /**
  * Objects
  */
-const geometry = new THREE.BoxGeometry(1, 1, 1);
-const material = new THREE.MeshBasicMaterial({
-  color: 0xffffff,
-  wireframe: true,
-});
-const mesh = new THREE.Mesh(geometry, material);
-mesh.add(helper);
+const group = new THREE.Group();
+scene.add(group);
 
-//Position
-// mesh.position.x = 0.7;
-// mesh.position.y = -0.6;
-// mesh.position.z = 1;
-mesh.position.set(0.7, -0.6, 1);
+// Red Cube
+const cube1 = new THREE.Mesh(
+  new THREE.BoxGeometry(1, 1, 1),
+  new THREE.MeshBasicMaterial({ color: 0xff0000 })
+);
+group.add(cube1);
 
-// Scale
-mesh.scale.x = 0.5;
-mesh.scale.y = 0.7;
-mesh.scale.z = 1.2;
+// Green Cube
+const cube2 = new THREE.Mesh(
+  new THREE.BoxGeometry(1, 1, 1),
+  new THREE.MeshBasicMaterial({ color: 0x00ff00 })
+);
+cube2.position.x = -2;
+group.add(cube2);
 
-scene.add(mesh);
+// Blue Cube
+const cube3 = new THREE.Mesh(
+  new THREE.BoxGeometry(1, 1, 1),
+  new THREE.MeshBasicMaterial({ color: 0x0000ff })
+);
+cube3.position.x = 2;
+group.add(cube3);
+
+// Group の Transformation
+group.position.y = 1;
+group.scale.y = 1.5;
+group.rotation.y = 1;
 
 /**
  * Sizes
@@ -50,6 +60,8 @@ const sizes = {
  */
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height);
 camera.position.z = 3;
+// camera.position.x = 0.5;
+// camera.position.y = 0.5;
 scene.add(camera);
 
 /**
