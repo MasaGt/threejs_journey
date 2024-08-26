@@ -6,11 +6,19 @@ import GUI from "lil-gui";
 /**
  * Debug GUI
  */
+const gui = new GUI({ title: "new title!", closeFolders: true });
 
-const gui = new GUI();
+const meshTweak = gui.addFolder("mesh");
+const materialTweak = gui.addFolder("material");
+const geometryTweak = gui.addFolder("geometry");
 const debugObj = {
   color: "#ff0000",
 };
+window.addEventListener("keydown", (e) => {
+  if (e.key == "h") {
+    gui.show(gui._hidden);
+  }
+});
 
 /**
  * Base
@@ -37,38 +45,54 @@ scene.add(mesh);
 //   .add(mesh.rotation, "y")
 //   .min(-Math.PI * 2)
 //   .max(Math.PI * 2);
+meshTweak.add(mesh.position, "y");
 
 // boolean props
-gui.add(mesh, "visible");
-gui.add(material, "wireframe");
+// gui.add(mesh, "visible");
+// gui.add(material, "wireframe");
+materialTweak.add(material, "wireframe");
 
 // manipulation
-const manipulationObj = {
-  revolution: () => {
-    gsap.to(mesh.rotation, {
-      duration: 1,
-      y: mesh.rotation.y + Math.PI * 2,
-    });
-  },
-};
+// const manipulationObj = {
+//   revolution: () => {
+//     gsap.to(mesh.rotation, {
+//       duration: 1,
+//       y: mesh.rotation.y + Math.PI * 2,
+//     });
+//   },
+// };
 
-gui.add(manipulationObj, "revolution");
+// gui.add(manipulationObj, "revolution");
 
 // tweak color
-// const color = {
-//   rgb: "000000",
-// };
-gui.addColor(debugObj, "color").onChange((v) => {
-  material.color.set(debugObj.color);
-});
+// gui.addColor(debugObj, "color").onChange((v) => {
+//   material.color.set(debugObj.color);
+// });
 
 // tweak geometry
-
-// Custom Object
-// const myObj = {
-//   val: 0,
-// };
-// gui.add(myObj, "val");
+const geometryObj = {
+  widthSegment: 2,
+  heightSegment: 2,
+  depthSegment: 2,
+};
+geometryTweak
+  .add(geometryObj, "widthSegment")
+  .min(1)
+  .max(10)
+  .step(1)
+  .onFinishChange((v) => {
+    mesh.geometry.dispose();
+    mesh.geometry = new THREE.BoxGeometry(1, 1, 1, v, 2, 2);
+  });
+// gui
+//   .add(geometryObj, "widthSegment")
+//   .min(1)
+//   .max(10)
+//   .step(1)
+//   .onFinishChange((v) => {
+//     mesh.geometry.dispose();
+//     mesh.geometry = new THREE.BoxGeometry(1, 1, 1, v, 2, 2);
+//   });
 
 /**
  * Sizes

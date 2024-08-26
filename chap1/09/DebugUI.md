@@ -37,9 +37,9 @@
 <br>
 
 2. GUI.add() にデバッグしたいパラメータオブジェクトとプロパティ名を渡す
-    - パラメータオプジェクト
+    - オプジェクト: GUIコントローラーが操作するオブジェクト 
 
-    - プロパティ名
+    - プロパティ名: コントロールするオブジェクトのプロパティ名
 
     ```js
     // GUI インスタンスは定義ずみ
@@ -209,8 +209,6 @@ $\color{red}デバッグGUIからカラーコードを拾うのではなく、�
 
 デバッグ GUI で選択された色を任意のオブジェクトに保持する方法もある
 
-// TODO: まだ完全に理解しきっていないので、補足が必要
-
 ```js
 const obj = {
     color: "#ff0000",
@@ -224,23 +222,172 @@ gui.addColor(obj, "color").onChange(() => {
 });
 ```
 
+<br>
+
+イメージ図
+<img src="./img/DebugGUI-Color_10.png" />
+<img src="./img/DebugGUI-Color_11.png" />
+
 ---
 
 ### ジオメトリのデバッグ
 
-ジオメトリ情報は、作成後に更新はできない
+**ジオメトリ情報をデバッグUIに追加する間違った方法**
+
+```js
+const geometry = new THREE.BoxGeometry(1, 1, 1, 2, 2, 2);
+
+gui.add(geometry, "heightSegment").onChange(() => {
+    // BoxGeometry インスタンスの heightSegment を変更する
+});
+```
+
+*width/height/depthSegment はジオメトリインスタンス作成時に使用されるが、インスタンス内部のパラメーターとしては保持されない
+
+→ gui.add() の第二引数に~segmentプロパティとして指定することができない
+
+<br>
+
+また、そもそも
+$\color{red}ジオメトリ情報(幅/高さ/深さ/セグメント数)は、作成後に更新はできない$ らしい
 
 → デバッグUIによってジオメトリ情報が変更されたら、その情報を元に新しいジオメトリを作成し直す必要がある
 
-onChange でデバッグしようとすると、シークバーで値を変化させるようなUIにすると、処理が重くなる → 値が変化するたびにジオメトリの作成と廃棄を行うため、処理の負担が増大する
+<br>
 
-onFinishChange で最終的な値にした場合のみジオメトリの再作成を行う方が効率が良い
+ここまでのポイント
+- ジオメトリインスタンスに ~segment プロパティはない
+    - 自分で、~segment の値を保持するインスタンスを作成する必要がある
+
+- ジオメトリ情報が更新されたら、作成ずみのジオメトリのプロパティを書き換えるのではなく、新しいジオメトリを作成する必要がある
+    
+```js
+// ~segment の値を保持するインスタンス
+const geometryObj = {
+    widthSegment: 2,
+    heightSegment: 2,
+    depthSegment: 2
+};
+
+gui.add(geometryObj, "widthSegment").min(1).max(10).step(1).onChange((v) => {
+    //ジオメトリ情報が更新されたら、新しいジオメトリを作成
+    mesh.geometry = new THREE.BoxGeometry(1, 1, 1, v, 1, 1);
+});
+```
+
+<br>
+
+*gui.add()のオブジェクトのプロパティはコールバックで値を受け取らなくても、デバッグ GUI 上で変更されると、即時反映される
+
+→ 上記コードは以下のようにも書ける
+
+```js
+gui.add(geometryObj, "widthSegment").min(1).max(10).step(1).onChange(() => {
+    //ジオメトリ情報が更新されたら、新しいジオメトリを作成
+    mesh.geometry = new THREE.BoxGeometry(1, 1, 1, geometryObject.widthSegment, 1, 1);
+});
+```
+
+<br>
+
+#### 古いジオメトリの廃棄
+
+- 新しいジオメトリを作成して、mesh.geometry に割り当てた時
+    - 古いジオメトリインスタンスはどこからも参照されないが、メモリ内にはまだ残っている
+
+       → 明示的に古いジオメトリを廃棄(メモリの解放)をしないと、メモリリークが発生する
+
+    - Geometry.dispose() で、dispose を呼んだジオメトリインスタンスを廃棄する
+
+```js
+gui.add(geometryObj, "widthSegment").min(1).max(10).step(1).onChange(() => {
+    // 古い = もう使用しないジオメトリの廃棄
+    mesh.geometry.dispose();
+
+    mesh.geometry = new THREE.BoxGeometry(1, 1, 1, geometryObject.widthSegment, 1, 1);
+});
+```
+
+<br>
+
+#### ジオメトリのデバッグと onChange()
+
+- ジオメトリのデバッグの時、やっていはいけないこと
+    - スライダーでジオメトリの値をデバッグさせたい場合、**gui.onChange()** でジオメトリパラメーターをデバッグしてはいけない
+
+        -> スライダーを動かしている最中にも onChange が発火し、ジオメトリの廃棄と作成が大量に走り GUP に負荷がかかる
+
+        ```js
+        // やってはいけない例
+        gui.add(geometryObj, "widthSegment").min(1).max(10).onChange(() => {
+            mesh.geometry.dispose();
+            mesh.geometry = new THREE.BoxGeometry(1, 1, 1, geometryObject.widthSegment, 1, 1);
+        });
+        ```
+
+<br>
+
+- 解決方法: onChange() ではなく onFinishChange() を使う
+
+    - onFinishChange() の発火タイミング: 
+        - テキストボックス: 値を入力し終わったら
+        - チェックボックス: チェックボックスをクリックし終わったら
+        - スライダー: **スライダーを動かし終わったら**
+
+    - よって、スライダーでジオメトリをデバッグ(操作)する場合、 onFinishChange() でスライダーを動かし終わった値を元に新しいジオメトリの作成を行えば良い
+
+        ```js
+        gui.add(geometryObj, "widthSegment").min(1).max(10).step(1).onFinishChange(() => {
+            // 古いジオメトリの廃棄と新しいジオメトリの作成&メッシュに適用
+        });
+        ```
+
+<br>
+
+<img src="./img/Debug-Geometry_1.gif" />
 
 ----
 
 ### addFolder()
 
-デバッグUI
+デバッグUIの項目をまとめることができる機能
+
+<br>
+
+- gui.add でコントロールするパラメーターを追加していった場合
+    - `controls` タブ直下に全ての項目が追加されている
+
+    <img src="./img/DebugGUI-UI_1.png">
+
+<br>
+
+- gui.addFolder()
+    - 引数: フォルダ(タブ)名
+    - 戻り値: GUI
+
+    ```js
+    import GUI from "lil-gui";
+    const gui = new GUI();
+    const geometryObj = {
+        widthSegment: 1,
+    };
+
+    // メッシュに関連する項目を追加するGUI
+    const meshTweak = gui.addFolder("mesh");
+    // マテリアルに関連する項目を追加するGUI
+    const materialTweak = gui.addFolder("material");
+    // ジオメトリに関連する項目を追加するGUI
+    const geometryTweak = gui.addFolder("geometry");
+
+    meshTweak.add(mesh.position, "y").min(-5).max(5);
+    materialTweak.add(mesh.material, "wireframe");
+    geometryTweak.add(geometryObj, "widthSegment").min(1).max(10).step(1).onFinishChange((v) => {
+        mesh.geometry.dispose();
+        mesh.geometry = new THREE.BoxGeometry(1, 1, 1, v, 1, 1);
+    });
+    ```
+    結果: `controls` の直下に3つのフォルダ(タブ)が作成され、それぞれのタブ直下にそれぞれの項目が表示されている
+    <img src="./img/DebugGUI-UI_2.png" />
 
 ---
 
@@ -248,8 +395,81 @@ onFinishChange で最終的な値にした場合のみジオメトリの再作�
 
 - サイズの変更
 
+    *デバッグUIの横幅のみ変えることができる。高さは変えることができない
+
+    - 方法: コンストラクタに　`{width: ~~~}` を渡す
+
+    ```js
+    const gui = new GUI({width: 800});
+    ```
+
+    <img src="./img/DebugGUI-UI_3.png" />
+
+<br>
+
 - タイトルの変更
 
-- フォルダーをデフォルトで閉じる
+    - デフォルトではデバッグGUIのタイトルは `controls`
+
+    - 方法: コンストラクタに `{title: "新しいタイトル"}` を渡すか、 `GUIインスタンス.title = "新しいタイトル"` で設定する
+
+    ```js
+    const gui = new GUI({ title: "new title!"});
+
+    // もしくは
+    gui.title = "new title!!!!";
+    ```
+
+    <img src="./img/DebugGUI-UI_4.png" />
+
+<br>
+
+- デバッグ GUI やフォルダーをデフォルトで閉じる
+
+    - デバッグ GUI を閉じる場合
+        - `guiインスタンス.close()` を呼ぶ
+
+    ```js
+    const gui = new GUI();
+    gui.close();
+    ```
+
+    <img src="./img/DebugGUI-UI_5.png" />
+
+    <br>
+
+    - フォルダーを閉じたい場合
+        - コンストラクタに `{closeFolders: true}` を渡す
+
+    ```js
+    const gui = new GUI({ colseFolders: true });
+    ```
+
+    <img src="./img/DebugGUI-UI_6.png" />
+    
+
+
+<br>
 
 - デバッグUI を非表示にする
+
+    - `guiインスタンス.hide()` を呼ぶ
+
+    ```js
+    const gui = new GUI();
+    gui.hide();
+    ```
+
+    <br>
+
+    - 実用的な使い方としては、とあるキーを押したら デバッグGUI の表示/非表示を切り替えるといった使い方がある
+
+    ```js
+    window.addEventListner("keydown", (e) => {
+        if (e.key == "h") {
+
+            // gui._hiddenはguiがhide状態であればtrue、そうでなければfalseが入る
+            gui.show(gui._hidden)
+        }
+    })
+    ```
