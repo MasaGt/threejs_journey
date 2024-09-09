@@ -395,52 +395,13 @@ const roughnessTexture = textureLoader.load("./textures/door/roughness.jpg");
 
 ### テクスチャーの変形
 
-#### repeat: 
-    - RepeatingWrapping
-    - MirroredRepeatingWrapping
-
-<br>
-
-#### offset: x/y 軸からどのくらいテクスチャーを離してから貼り付けるか
-
-<br>
-
-#### rotate
-
-    - 回転の中心となる点に注意
-
-<br>
-<br>
-
-参考サイト
-
-repeat の利用方法
-[Three.js の ExtrudeGeometry に Texture を適用する](https://zenn.dev/ike_pon/scraps/8e9da4f68dfd43)
+詳しくは[こちら](./Texture_Transformation.md)を参照
 
 ---
 
-### Mipmapping
+### Mipmapping & Texture Filtering
 
-    - Minification Filter
-        - メッシュのサイズがテクスチャー画像のサイズよりも小さい場合 = テクスチャー画像の縮小が必要な場合に発生する処理
-
-    - Magnification Filter
-        - メッシュのサイズがテクスチャー画像のサイズよりも大きい場合 = テクスチャー画像の拡大が必要な場合に発生する処理
-
-    - MinMap の生成をオフにする
-
-<br>
-<br>
-
-参考サイト
-
-[MipMapを可視化しよう](https://qiita.com/dgtanaka/items/2ec0fd88236daa5c3cc7)
-
-[ミップマップとテクスチャフィルタリング](https://wgld.org/d/webgl/w074.html)
-
-[THREE.jsのテクスチャについて調べる](https://nogson2.hatenablog.com/entry/2017/08/01/235850)
-
-[Three.js備忘録（2）](https://koro-koro.com/threejs-no2/)
+詳しくは[こちら](./Mipmap_TextureFiltering.md)を参照
 
 ---
 
