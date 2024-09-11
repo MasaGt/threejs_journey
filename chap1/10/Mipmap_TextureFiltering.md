@@ -189,7 +189,7 @@
 
     <img src="./img/Apply-Mipmap-Texture_2.png" />
 
-    *[Trilinear Filtering](#trilinear-filtering) では、2つの Mipmap テクスチャを使ってサンプリングする
+    *[Trilinear Filtering](#trilinear-filtering) では、2つの Mipmap テクスチャ (上記で適用されるテクスチャと $\color{red}\text{1つ高いレベル (低解像度) のテクスチャ}$) を使ってサンプリングする
 
 <br>
 
@@ -228,9 +228,45 @@
 
 ---
 
-### 異方性フィルタリング
+### 異方性フィルタリング (Anisotropic Filtering)
 
 
+#### ざっくりとした概要
+
+- テクスチャからのサンプリングの際に、オブジェクトの大きさだけではなく、カメラからの角度 = オブジェクトの傾きも考慮に入れてサンプリングする方法
+
+<br>
+
+- 異方性フィルタリングは様々な実装方がある
+    - Ripmap を生成する方法
+    - EWA Filter ピクセルの色のサンプリング範囲を楕円形にとる方法
+    - Summed Area Table というアルゴリズムを使う方法
+
+<br>
+
+- カメラとの角度が急な(鋭角)なオブジェクト面ピクセルの色は、より広範囲のテクスチャ領域からサンプリングされる
+
+    <img src="./img/Anisotropic-Filtering_1.gif" />
+
+    引用: [ATI's Optimized Texture Filtering Called Into Question](https://www.tomshardware.com/reviews/ati,819-5.html)
+
+    <br>
+
+    <img src="./img/Anisotropic-Filtering_2.png" />
+
+    <br>
+
+    <img src="./img/Anisotropic-Filtering_3.png" />
+
+<br>
+
+- 対象のピクセルのサンプリング範囲から、サンプリングポイントを複数箇所設定し、Bilinear や Trilinear でそのポイントの色をサンプリングする。最終的に各サンプリングポイントでサンプリングした色を構成し、対象のピクセルの色を決定するらしい
+
+    - サンプリングポイントが多ければ多いほど、傾いたオブジェクトでもテクスチャが綺麗に映る
+    
+        → しかし、計算量は多くなるので、パフォーマンスに影響がでる可能性もある 
+
+    <img src="./img/Anisotropic-Filtering_4.png" />
 
 <br>
 <br>
@@ -238,3 +274,13 @@
 参考サイト
 
 [ためになる3Dグラフィックスの歴史(3)。テクスチャフィルタリング技術最適化の乱](https://pc.watch.impress.co.jp/docs/column/zenji/1483093.html)
+
+[Chapter VIII Image Texturing](https://zumrakavafoglu.github.io/files/bca611-cg/lecture12/cg-lecture12.pdf)
+
+[mipmap とフィルタリング(続き)](https://wlog.flatlib.jp/2006/11/03/n851/)
+
+[テクスチャマッピング](https://kgussan.ojaru.jp/texture-mapping.html)
+
+[Texture Filtering](https://glasnost.itcarlow.ie/~powerk/GeneralGraphicsNotes/texturemapping/TextureFiltering.html)
+
+[Anti-aliasing for Texture Mapping](https://slideplayer.com/slide/14029741/)
