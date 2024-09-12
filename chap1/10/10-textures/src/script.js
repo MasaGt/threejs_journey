@@ -17,6 +17,9 @@ const loadingManager = new THREE.LoadingManager();
 loadingManager.onStart = () => {
   console.log("Started!");
 };
+loadingManager.onLoad = () => {
+  console.log("onLoad!");
+};
 loadingManager.onProgress = () => {
   console.log("onProgress!");
 };
@@ -25,9 +28,9 @@ loadingManager.onError = () => {
 };
 
 const textureLoader = new THREE.TextureLoader(loadingManager);
-// const colorTexture = textureLoader.load("./textures/door/color.jpg");
+const colorTexture = textureLoader.load("./textures/door/color.jpg");
 // const colorTexture = textureLoader.load("./textures/checkerboard-8x8.png");
-const colorTexture = textureLoader.load("./textures/minecraft.png");
+// const colorTexture = textureLoader.load("./textures/minecraft.png");
 // const colorTexture = textureLoader.load(
 //   "./textures/checkerboard-1024x1024.png"
 // );
@@ -55,9 +58,9 @@ colorTexture.colorSpace = THREE.SRGBColorSpace;
 // colorTexture.offset.y = 0.5;
 
 // Rotation
-// colorTexture.rotation = Math.PI / 4;
 // colorTexture.center.x = 0.5;
 // colorTexture.center.y = 0.5;
+// colorTexture.rotation = Math.PI / 4;
 
 /**
  * Mipmapping

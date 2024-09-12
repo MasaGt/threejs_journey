@@ -284,3 +284,75 @@
 [Texture Filtering](https://glasnost.itcarlow.ie/~powerk/GeneralGraphicsNotes/texturemapping/TextureFiltering.html)
 
 [Anti-aliasing for Texture Mapping](https://slideplayer.com/slide/14029741/)
+
+---
+
+### Three.js でのテクスチャフィルタリング
+
+- Magnification 時のテクスチャのサンプリング方法を指定することができる (オブジェクトが元のテクスチャサイズよりも大きく描画される時の処理)
+
+    - Texture インスタンスの magFilter プロパティにサンプリング方法を指定する
+
+        - THREE.LinearFilter (デフォルト): Bilinear Sampling でピクセルの色のサンプリングを行う
+
+        - THREE.NearestFilter: Nearest Neighbourhood でサンプリングを行う
+
+    *元のテクスチャの大きさよりも大きい時のサンプリング方法なので、mipmap は使っていない
+
+    ```js
+    const texture = loader.load("テクスチャのパス");
+
+    textur.magFilter = THREE.NearestFilter;
+    ```
+
+<br>
+
+- Minification 時のテクスチャのサンプリング方法も指定することができる
+
+    - Texture インスタンスの minFilter プロパティにサンプリング方法を指定する
+
+        - THREE.NearestFilter: 最大サイズの mipmap テクスチャから Nearest Neighbourhood でサンプリングを行う
+
+        - THREE.LinearFilter: 最大サイズの mipmap テクスチャから Bilinear Sampling でサンプリングを行う
+
+        - THREE.NearestMipmapNearestFilter: 最適なレベルの mipmap テクスチャから Nearest Neighbourhood でサンプリングを行う
+
+        - THREE.NearestMipmapLinearFilter: 最適なレベルの mipmap テクスチャから Bilinear Sampling でサンプリングを行う
+
+        - THREE.LinearMipmapNearestFilter: 最適なレベルとその１つ上のレベル(低解像度)の mipmap テクスチャから Nearest Neighbourhood でサンプリングを行う
+
+        - THREE.LinearMipmapLinearFilter (デフォルト): 最適なレベルとその１つ上のレベル(低解像度)の mipmap テクスチャから Trilinear Sampling でサンプリングを行う
+
+    *NearestFilter と LinearFilter は Mipmap を利用していない
+
+    ```js
+    const texture = loader.load("テクスチャのパス");
+
+    texture.minFilter = THREE.NearestFilter;
+    ```
+
+    <br>
+
+    - ポイント
+        - NearestMipmap~~: オブジェクトのサイズに最適なレベルの mipmap からサンプリングする
+
+        - NearestMipmap~~: 最適なレベルとその１つ上のレベル(低解像度)の mipmap テクスチャからサンプリングする
+
+<br>
+
+- Mipmap 生成を OFF にする
+
+    - minFilter に THREE.NearestFilter か THREE.LinearFilter を利用する時は、 OFF にした方が無駄な低解像度のテクスチャを GPU 側で持たなくて済む
+
+    ```js
+    texture.generateMipmaps = false;
+    ```
+
+<br>
+<br>
+
+参考サイト
+
+[WebGLのテクスチャ](https://webglfundamentals.org/webgl/lessons/ja/webgl-3d-textures.html)
+
+[Three.js備忘録（2）](https://koro-koro.com/threejs-no2/)
