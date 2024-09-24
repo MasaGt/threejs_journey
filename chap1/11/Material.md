@@ -161,14 +161,14 @@
 
 - 主に法線のデバッグに利用されるマテリアル
 
-- コンストラクタに何も渡さなくても OK なマテリアル
+- テクスチャ画像を渡さなくても OK なマテリアル
 
     ```js
     const material = new THREE.MeshNormalMaterial();
     const mesh = new THREE.Mesh(geometry, material);
     ```
 
-    <img src="./img/MeshNormalMaterial_1.png" />
+<img src="./img/MeshNormalMaterial_1.png" />
 
 <br>
 
@@ -206,7 +206,7 @@
 
 <br>
 
-- リアルなマテリアルが利用できる一方で、MeshMatcapMaterial はライトやカメラの位置によってリアルな色の変化が起きるわけではない
+- リアルな表面の質感を表現できる一方で、MeshMatcapMaterial はライトやカメラの位置によって色の変化や光の反射は変化しない
 
     - テクスチャに描かれたライティングに依存するため
 
@@ -240,39 +240,248 @@ material.matcap = matcapTexture;
 
 ### MeshDepthMaterial
 
-カメラに近いものは白く、遠いものほど黒になるマテリアル
+- カメラに近いものは白く、遠いものほど黒になるマテリアル
+
+- このマテリアルも MeshNormalMaterial のようにテクスチャ画像を渡さなくても OK なマテリアル
+
+```js
+const material = new THREE.MeshDepthMaterial();
+```
+
+<img src="./img/MeshDepthMaterial_1.gif" />
+
+<br>
+<br>
+
+参考サイト
+
+[【three.js】マテリアルの種類まとめ](https://zenn.dev/raihara3/articles/20220505_threejs_material#meshdepthmaterial)
 
 ---
 
 ### MeshLambertMaterial
 
-*光源(ライト)が無いとオブジェクトが見えない
+- *光源(ライト)が無いとオブジェクトが見えないマテリアル
 
-光の拡散反射をシミュレートするマテリアル
-- ライトの方向と、オブジェクトの面が垂直で、距離が近ければ近いほどその面は明るく、
+- テクスチャ画像を渡さなくてもいいマテリアル
+
+- 光の拡散反射(ランバート反射モデル)をシミュレートするマテリアル
+    - ライトの方向と、オブジェクトの面が垂直で、距離が近ければ近いほどその面は明るく見える反射モデル = ランバート反射モデル
+
+    - オブジェクトの面の明るさを決めるのは光源に対する角度と光の強さ
+
+    <img src="./img/Lambertian-Reflectance-Model_1.jpg" />
+
+    引用サイト: [「光があたる面が明るい」というのは本当？](http://sawanoya.blogspot.com/2012/06/blog-post_29.html)
+
+<br>
+
+```js
+// light オブジェクトの作成 & シーンへの追加を忘れずに
+
+const material = new THREE.MeshLambertMaterial();
+```
+
+<img src="./img/MeshLambertMaterial_1.gif" />
+
+<br>
+<br>
+
+参考サイト
+
+[【Unity 初心者】絵を見てざっくり学べるUnity　~反射モデルって何？~](https://zenn.dev/hitsumasf/articles/b3b92bb192a586)
+
+[「光があたる面が明るい」というのは本当？](http://sawanoya.blogspot.com/2012/06/blog-post_29.html)
 
 ---
 
 ### MeshPhongMaterial
 
-*これもライトが無いとオブジェクトが見えない
+- *これもライトが無いとオブジェクトが見えないマテリアル
 
-MeshLambertMaterial と同様に光の拡散反射をシミュレートするマテリアル
-- 
+- テクスチャ画像を渡さなくてもいいマテリアル
+
+- MeshLambertMaterial と同じようにに光の反射(Phong反射)をシミュレートするマテリアル
+
+    - Phong 反射とは
+
+        - ランバート反射モデルに、反射光のシミュレートを加えたような感じのモデル
+
+            <img src="./img/Phong-Reflection-Model_1.jpg" />
+
+            引用: [【Unityシェーダ入門】フォン鏡面反射で金属っぽくしてみる](https://nn-hokuson.hatenablog.com/entry/2016/11/04/104242)
+
+        <br>
+
+        - 視線(カメラからの角度)が光の反射ベクトルの角度に近ければ近いほど、反射光も強くなる
+            - 光が反射する方向(光の反射ベクトル)は、物体の面の法線を挟んで光の入社ベクトルと反対方向になる
+        
+            <img src="./img/Phong-Reflection-Model_2.png" />
+
+            引用: [【Unityシェーダ入門】フォン鏡面反射で金属っぽくしてみる](https://nn-hokuson.hatenablog.com/entry/2016/11/04/104242)
+
+<br>
+
+#### プロパティ
+
+- specular
+    - 反射光の色
+    - Color インスタンスを渡す必要がある
+    - デフォルトは `0x111111` (とても暗いグレー)
+
+    ```js
+    const material = new THREE.MeshPhongMaterial();
+
+    // 反射光を赤色にしてみる
+    material.specular = new THREE.Color("#ff0000");
+    ```
+
+    <img src="./img/MeshPhongMaterial_1.gif" />
+
+<br>
+
+- shininess
+    - 反射光のぼやけ/シャープ具合 (float)
+
+        - 数値が高ければよりシャープ = 反射光の範囲が小さくなる
+
+        - 数値が低ければよりぼやけた感じ = 反射光の範囲が広くなる
+
+    - デフォルトは30
+
+    <img src="./img/MeshPhongMaterial_2.png" />
+
+<br>
+<br>
+
+参考サイト
+
+[【Unityシェーダ入門】フォン鏡面反射で金属っぽくしてみる](https://nn-hokuson.hatenablog.com/entry/2016/11/04/104242)
 
 ---
 
 ### MeshToonMaterial
 
-*これもライトが無いとオブジェクトが見えない
+- *これもライトが無いとオブジェクトが見えないマテリアル
+
+- テクスチャ画像を渡さなくてもいいマテリアル
+
+- カートゥーンチックな陰影を表現することができるマテリアル
+
+    - 光の入射ベクトルとオブジェクトの面の法線の内積をとり、その値によって光が当たっている・当たっておらず影になっていることの判定を行うらしい
+
+        <img src="./img/ToonShading_1.jpg" />
+
+        引用: [［CEDEC 2010］「次世代アイドルマスター」はこうして作られている！　トゥーンシェーディングの概念を覆す最新処理とは](https://www.4gamer.net/games/105/G010549/20100903012/)
+
+    <br>
+
+    - デフォルトでは、光が当たっている/当たっていない(= 影になっている)の2色で表現される
+
+        <img src="./img/ToonShading_2.png" />
+
+    - グラデーションマップ(ランプ)を利用することで、影の度合いを細かくすることもできる
+
+        <img src="./img/ToonShading_3.jpg" />
+
+        引用: [「生と死」を物語る陰影表現とは――『Xenoblade3（ゼノブレイド3）』のキャラクターを魅せる2灯トゥーンシェーディング、世界を描くアップサンプリング【CEDEC+KYUSHU 2022】](https://gamemakers.jp/article/2023_03_22_33475/)
+
+<br>
+
+#### プロパティ
+
+- gradientMap
+    - グラデーションマップ(ランプ) = 影の段階を表したテクスチャー画像を指定する
+
+        <img src="./img/lamp.png" />
+
+    - gradientMap を設定するとき、テクスチャーの min/magFilter を Nearest にしなければならない
+
+        - Nearest にしないと影が表現されなくなる
+
+        - min/magFilter が Nearest の場合、最大サイズ = 渡されたテクスチャしか参照しないので、 テクスチャの generateMipmaps を OFF にすると GPU のメモリ節約になる
+
+```js
+// グラデーションマップテクスチャーのロード
+const gradientTexture = textureLoader.load("グラデーションマップ画像");
+
+//グラデーションマップテクスチャが補色によって中間色が生成されないように mig/min Filter に Nearest を指定
+gradientTexture.magFilter = THREE.NearestFilter;
+gradientTexture.minFilter = THREE.NearestFilter;
+
+// mipmap の生成を OFF にする
+gradientTexture.generateMipmaps = false;
+
+const material = new THREE.MeshToonMaterial();
+
+// グラデーションマップの指定
+material.gradientMap = gradientTexture;
+```
+
+<br>
+
+影の段階がグラデーションマップに対応するようになった
+
+<img src="./img/MeshToonMaterial_1.png" />
+
+<br>
+<br>
+
+参考サイト
+
+[トゥーンレンダリング](https://ja.wikipedia.org/wiki/トゥーンレンダリング)
+
+[UE5でつくるセルシェーディング 第1回：セルシェーディング入門](https://cgworld.jp/regular/202306-ue5toon-01.html)
+
+[【Unity URP】キャラクタートゥーンシェーダの表現手法をまとめる その１(Lambert二値化)](https://zenn.dev/inpro/articles/84a72e5ebe3c33)
 
 ---
 
 ### MeshStandardMaterial
 
-*これもライトが無いとオブジェクトが見えない
+- *これもライトが無いとオブジェクトが見えない
+
+- テクスチャ画像を渡さなくてもいいマテリアル
+
+- PBRマテリアル = [PBR](../10/Textures.md#pbr-principles) をサポートするマテリアル
+
+    - 光の反射/拡散だけではなく、荒さ(roughness)や金属度(metalness)もシミュレートすることができる
+
+#### プロパティ
+
+- metalness (float)
+    - 表面の金属性を指定する (=表面の光の反射率)
+
+    - 0.0 ~ 1.0 の範囲で指定する
+        - 0.0: 金属性が低い = 表面の光の反射率が低い
+
+        - 1.0: 金属性が高い = 表面の光の反射率が高い
+
+<br>
+
+- roughness (float)
+
+    - 表面の荒さを指定する (表面の光の拡散率)
+
+    - 0.0 ~ 1.0 の範囲で指定する
+        - 0.0: 表面が滑らか = 光の拡散が少ない
+
+        - 1.0: 表面が粗い = 光の拡散が大きい
 
 
 ---
 
-### 鏡面反射と拡散反射
+### 環境マッピング (Environment Mapping)
+
+- [テクスチャマッピング技法](../10/Textures.md#テクスチャーマッピング技法の種類)の1つ
+
+#### 環境マップ
+
+- =テクスチャ画像
+
+<br>
+<br>
+
+参考サイト
+
+[Three.js備忘録（4）](https://koro-koro.com/threejs-no4/)
