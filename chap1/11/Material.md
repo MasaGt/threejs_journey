@@ -468,20 +468,6 @@ material.gradientMap = gradientTexture;
 
         - 1.0: 表面が粗い = 光の拡散が大きい
 
-
----
-
-### 環境マッピング (Environment Mapping)
-
-- [テクスチャマッピング技法](../10/Textures.md#テクスチャーマッピング技法の種類)の1つ
-
-#### 環境マップ
-
-- =テクスチャ画像
-
-<br>
 <br>
 
-参考サイト
-
-[Three.js備忘録（4）](https://koro-koro.com/threejs-no4/)
+#### テクスチャマッピング系のプロパティ
