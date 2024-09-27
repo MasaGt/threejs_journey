@@ -15,7 +15,7 @@
 
 参考サイト
 
-[Three.js備忘録（4）](https://koro-koro.com/threejs-no4/)
+[環境マッピング](https://ja.wikipedia.org/wiki/環境マッピング)
 
 ---
 
@@ -30,13 +30,19 @@
     - キューブマップ
         - 正方形テクスチャが 6 つで一組になったテクスチャ画像
 
-            <img src="./img/Cube-Map_1.png" />
+        <img src="./img/Cube-Map_1.png" />
 
-            引用: [コンポーネントのレンダリング](https://docs.unity3d.com/ja/2018.4/Manual/class-Cubemap.html)
+        引用: [コンポーネントのレンダリング](https://docs.unity3d.com/ja/2018.4/Manual/class-Cubemap.html)
 
-            <img src="./img/Cube-Map_2.png.webp" />
+        <br>
 
-            引用: [【連載】Unity時代の3D入門 – 第7回「キューブマッピング」](https://blog.applibot.co.jp/2017/11/20/tutorial-for-unity-3d-7/)
+        <img src="./img/Cube-Map_2.png.webp" />
+
+        引用: [【連載】Unity時代の3D入門 – 第7回「キューブマッピング」](https://blog.applibot.co.jp/2017/11/20/tutorial-for-unity-3d-7/)
+
+        <br>
+
+        - Three.js では6枚の独立したテクスチャ画像を CubeTextureLoader でロードする
 
     <br>
 
@@ -45,6 +51,16 @@
         - =[matcap](./Material.md#meshmatcapmaterial) テクスチャマッピング
 
         - カメラを動かしても常にオブジェクトの見え方が同じになる
+
+        <img src="./img/Sphere-Map_1.png" />
+
+        引用: [コンポーネントのレンダリング](https://docs.unity3d.com/ja/2018.4/Manual/class-Cubemap.html)
+
+        <br>
+
+        <img src="./img/Sphere-Map_2.png" />
+
+        引用: [【Unity】【シェーダ】MatCap（スフィアマッピング）を実装する](https://light11.hatenadiary.com/entry/2018/06/14/231424)
     
     <br>
 
@@ -155,8 +171,245 @@ HDR について
 
 ### Three.js で環境マッピングの利用方法
 
+1. 環境マップテクスチャをロードするためのローダーを用意する
+
+    - ロードする環境 **マップの種類や、マップの拡張子によって利用するローダーが異なる** ことに注意
+
+        - キューブマップをロードする場合: **THREE.CubeTextureLoader** を使用する
+            - CubeTextureLoader は `import * as THREE from "three"` 時にすでにインポートされている
+
+            ```js
+            import * as THREE from "three";
+
+            // キューブマップ用のローダー
+            const cubeTextureLoader = new THREE.CubeTextureLoader;
+            ```
+
+        <br>
+
+        - .hdr 画像をロードする場合: **THREE.RGBELoader** を使用する
+            - 別途 `three/addons/loaders/RGBELoader.js` からインポートする必要がある
+
+            ```js
+            import { RGBELoader } from "three/addons/loaders/RGBELoader.js";
+
+            // .hdr用のローダー
+            const hdrLoader = new RGBELoader();
+            ```
+        
+        <br>
+
+        - .exr 画像をロードする場合: **THREE.EXRLoader** を使用する
+            - 別途 `three/addons/loaders/EXRLoader.js` からインポートする必要がある
+
+            ```js    
+            import { EXRLoader } from "three/addons/loaders/EXRLoader.js";
+
+            // .exr用のローダー
+            const exrLoader = new EXRLoader();
+            ```
+
+<br>
+
+2. 環境マップテクスチャのロード
+
+    - キューブマップテクスチャの場合
+
+        - CubeTextureLoader.load の使い方
+            - 第一引数: 6枚のテクスチャ画像のパスの**配列** (配列に格納するテクスチャのパスの順番に注意)
+
+                - 配列に格納するテクスチャは、`pos-x, neg-x, pos-y, neg-y, pos-z, neg-z` の順番で格納すること
+
+                - 右、左、上、下、正面、後ろのテクスチャ画像の順
+
+            - 第二引数: onLoad のコールバック関数
+
+            - 第三引数: onProgress のコールバック関数
+
+            - 第四引数: onError のコールバック関数
+
+            ```js
+            const cubeTextures = [
+                "右側のテクスチャ画像のパス",
+                "左側のテクスチャ画像のパス",
+                "上側のテクスチャ画像のパス",
+                "下側のテクスチャ画像のパス",
+                "正面のテクスチャ画像のパス",
+                "後ろ側のテクスチャ画像のパス"
+            ];
+
+            // 6枚のテクスチャ画像からキューブマップを作成
+            const cubeMap = cubeTextureLoader.load(cubeTextures);
+            ```
+
+    <br>
+
+    - パノラママップテクスチャの場合
+
+        - .hdr の場合
+            - RGBELoader の load 関数の使い方: [TextureLoader](../10/Textures.md#textureloader-を利用する方法) と同じ
+
+            ```js
+            hdrLoader.load("テクスチャ画像のパス", (v) => {
+                // ロード完了時のコールバック関数
+            });
+            ```
+
+        <br>
+
+        - .exr の場合
+
+            - EXRLoader の load 関数の使い方: [TextureLoader](../10/Textures.md#textureloader-を利用する方法) と同じ
+
+            ```js
+            exrLoader.load("テクスチャ画像のパス", (v) => {
+                // ロード完了時のコールバック関数
+            });
+            ```
+
+<br>
+
+3. 環境マップのテクスチャマッピング (反射マッピングか屈折マッピング) の指定
+
+    - ポイント
+        - **環境マップテクスチャに対して**設定する
+
+        - 環境マップテクスチャの mapping プロパティで設定する
+            - mapping プロパティ: テクスチャ画像がオブジェクトに対してどのようにマッピングされるかについてのプロパティ (デフォルトは UV マッピング)
+
+    <br>
+
+    - キューブマップテクスチャの場合
+
+        - 反射マッピングの場合: `THREE.CubeReflectionMapping` を指定する
+
+            ```js
+            const cubeMap = cubeTextureLoader.load(["キューブテクスチャ画像のパス"]);
+
+            // 反射マッピングを指定
+            cubeMap.mapping = THREE.CubeReflectionMapping;
+            ```
+
+        <br>
+
+        - 屈折マッピングの場合: `THREE.CubeRefractionMapping` を指定する
+
+            ```js
+            const cubeMap = cubeTextureLoader.load(["キューブテクスチャ画像のパス"]);
+
+            // 屈折マッピングを指定
+            cubeMap.mapping = THREE.CubeRefractionMapping;
+            ```
+
+    <br>
+
+    - パノラママップテクスチャの場合
+    
+        - 反射マッピングの場合: `THREE.EquirectangularReflectionMapping` を指定する
+
+            ```js
+            hdrLoader.load("テクスチャ画像のパス", (texture) => {
+                texture.mapping = THREE.EquirectangularReflectionMapping;
+            });
+            ```
+        
+        <br>
+
+        - 屈折マッピングの場合: `THREE.EquirectangularRefractionMapping ` を指定する
+
+            ```js
+            exrLoader.load("テクスチャ画像のパス", (texture) => {
+                texture.mapping = THREE.EquirectangularRefractionMapping;
+            });
+            ```
+
+<br>
+
+4. オブジェクトに環境マップを設定する (もしくは、シーンに環境マップを設定する)
+
+    - ポイント
+        - シーンに環境マップを設定すると、シーンにある全てのオブジェクトの**マテリアル**に環境マップが設定される
+    
+        - シーンに環境マップを設定する際に、すで envMap プロパティに環境マップが設定されているマテリアルがある場合、そのマテリアルの環境マップを上書くことはできない
+
+    <br>
+
+    - 個別にマテリアルに環境マップを設定する場合
+        - 各マテリアルインスタンスの envMap プロパティに環境マップテクスチャを指定する
+
+        ```js
+        const cubeMap = cubeTextureLoader.load(["キューブテクスチャ画像のパス"]);
+
+        //反射マッピングを指定
+        cubeMap.mapping = THREE.CubeReflectionMapping;
+
+        // 個別のマテリアルに環境マップを設定する
+        const material = new THREE.MeshStandardMaterial({ envMap: cubeMap });
+        ```
+
+    <br>
+
+    - シーンに環境マップを設定する場合
+
+        - Sceneインスタンスの environment プロパティに環境マップテクスチャを指定する
+
+        ```js
+        // .hdr画像のロード
+        hdrLoader.load("テクスチャ画像のパス", (texture) => {
+                // 反射マッピングを指定
+                texture.mapping = THREE.EquirectangularReflectionMapping;
+
+                // ★シーンに環境マップを指定する
+                scene.environment = texture;
+            });
+        ```
+        
+
+
 
 <br>
 <br>
 
 参考サイト
+
+[Three.js備忘録（4）](https://koro-koro.com/threejs-no4/)
+
+[CubeTextureLoader](https://threejs.org/docs/#api/en/loaders/CubeTextureLoader)
+
+[Three.jsでキューブ環境マッピング](https://www.pentacreation.com/blog/2018/12/181215.html)
+
+---
+
+### 背景に環境マップを設定
+
+- 背景に環境マップを設定することで、まるでその空間にいるかのようにシーンを作ることができる
+
+    <img src="./img/Environment-Mapping-Background_1.gif" />
+
+<br>
+
+- Scene インスタンスの background プロパティに読み込んだ環境マップテクスチャを設定する
+
+    ```js
+    // シーンの作成
+    const scene = new THREE.Scene();
+
+    /**
+     * キューブマップの場合
+     */
+    const cubeMap = cubeTextureLoader.load(["画像パス"]);
+    // シーンの背景に環境マップを設定
+    scene.background = cubeMap;
+
+    /**
+     * パノラマ画像(.hdr)の場合
+     */
+    rgbeLoader.load("画像パス", (texture) => {
+        // シーンの背景に環境マップを設定
+        scece.background = texture;
+    });
+    ```
+
+参考サイト
+
+[Three.js備忘録（4）](https://koro-koro.com/threejs-no4/)
