@@ -436,7 +436,7 @@ const roughnessTexture = textureLoader.load("./textures/door/roughness.jpg");
 
 <br>
 
-#### Aplpha
+#### Alpha
 
 - オブジェクトを部分的に透過させるためのマッピング技法
 
