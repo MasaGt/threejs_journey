@@ -289,18 +289,75 @@
 
 <br>
 
-- transmission
+- transmission (float)
+
+    - オブジェクトの透過度 (光学的透明度)
+        - opacity とは異なり、 `transparent = true` は設定する必要は無い
+    
+    - opacity とはまた別の意味での透過度
+
+    - 0 ~ 1 の間で設定する
+
+    <img src="./img/Transmission_1.png" />
+
+    <br>
+
+    - **metalness や roughness が 1** の時は透過して見えない
+
+        - metalness = 1の時、光がほとんど表面で反射して透過しないから
+
+        - roughness = 1の時、光がほとんど表面で拡散して透過しないから
+
+        <img src="./img/Metalness-Roughness-Transmission_1.png" />
  
 <br>
 
-- ior
+- ior (float)
     - 光の屈折率
 
-    - iridescenceIOR は iridescence 層の光の屈折率だったが、 iro はオブジェクトの屈折率
+    - iridescenceIOR は iridescence 層の光の屈折率だったが、 iro はオブジェクトの光の屈折率
+
+    - デフォルトは1.5 (水晶の屈折率とほぼ同じ)
+
+    - 1.0 ~ 2.33 で設定すると現実的なモデリングができて良い
+
+    - ior が高いと、光を反射しやすくなる (=金属っぽい見た目になる)
+
+    <img src="./img/IOR_1.png" />
+
+    <br>
+
+    - thickness に 0 以上の値が設定されている場合、ior を大きくすると背景がよりズームして見える
+        - オブジェクトが球体の場合、大きく歪んで見える 
+
+    <img src="./img/IOR_2.png" />
 
 <br>
 
 - thickness
+
+    - オブジェクトの厚みを設定するプロパティ
+        - 体積の値を設定するっぽい
+
+    - 実際のオブジェクトの形状には影響しない
+
+    - オブジェクトを通して背景を屈折させて見せる場合に設定が必要
+
+    - デフォルトは0: 背景は屈折しない
+
+    - thickness が高ければ高いほど、背景がズームして見える
+        - オブジェクトが球体の場合、大きく歪んで見える
+
+        <img src="./img/Thickness_2.png" />
+
+        <br>
+
+        - しかし、ior = 1の時は thickness をどんなに大きくしても背景は屈折しない
+
+            → 光が屈折せずに直進するから
+
+        <img src="./img/Thickness_1.png" />
+
 
 <br>
 <br>
