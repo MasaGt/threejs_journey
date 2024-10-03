@@ -328,7 +328,7 @@
     <br>
 
     - thickness に 0 以上の値が設定されている場合、ior を大きくすると背景がよりズームして見える
-        - オブジェクトが球体の場合、大きく歪んで見える 
+        - オブジェクトが球体の場合、背景は歪んで見える 
 
     <img src="./img/IOR_2.png" />
 
@@ -346,7 +346,7 @@
     - デフォルトは0: 背景は屈折しない
 
     - thickness が高ければ高いほど、背景がズームして見える
-        - オブジェクトが球体の場合、大きく歪んで見える
+        - オブジェクトが球体の場合、背景は歪んで見える 
 
         <img src="./img/Thickness_2.png" />
 
@@ -357,7 +357,6 @@
             → 光が屈折せずに直進するから
 
         <img src="./img/Thickness_1.png" />
-
 
 <br>
 <br>
@@ -371,6 +370,13 @@ iridiscence について
 - [なぜシャボン玉は虹色に見える？「光の干渉」で色が生まれる原理を学ぶ](https://jp.mitsuichemicals.com/jp/molp/article/detail_20240607/index.htm)
 
 - [adokoの物理](http://adoko.blue.coocan.jp/hadou/kouha9.html)
+
+iorが大きくなると反射率が高くなる理由
+- [屈折率](https://group.nagase.com/nagasechemtex/denatron/museum/dictionary/292/#:~:text=物質の屈折率の,しやすいのでキラキラする%E3%80%82)
+
+transmission が設定されたオブジェクトの背景がズームして見えるわけ
+
+- [楽しい！釣りの自然科学（第1回　逃がした魚は大きい！）](https://www.ana.co.jp/travelandlife/article/001665/)
 
 ---
 
@@ -438,3 +444,21 @@ iridiscence について
 [月刊　うちゅう vol.38](http://www.techno-synergy.co.jp/tech/book/Universe149(2022)pp4-9.pdf)
 
 [光と色の話 第一部](https://www.ccs-inc.co.jp/guide/column/light_color/vol22.html)
+
+---
+
+#### transmission の ior と thickness
+
+以下のことが観察できたため、Three.js の内部的には、各値を掛け合わせているはず
+
+~~それか thickness × 1/ior~~
+
+- (現実的にはありえないが) ior が 1 以下のとき、 thickness を大きくしていくと、オブジェクトを通した景色が小さくなっていく
+
+- thickness = 0の時、 ior をいくら大きくしても背景は屈折しない
+
+<br>
+
+ただし以下の挙動から、単純に $ior \times thickness$ ではないこともわかる
+
+- ior = 1 の時、thickness をいくら大きくしても背景は屈折しない
