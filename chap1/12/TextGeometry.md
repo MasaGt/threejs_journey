@@ -25,7 +25,10 @@
 
     ```js
     fontLoader.load("typefaceファイルのパス", (font) => {
+        // font: ロードしたtypeface ファイルから作成した Font インスタンス
+
         //TextGeometryインスタンスの作成
+        const TextGeometry
 
     })
     ```
@@ -38,10 +41,10 @@
 
     ```js
     fontLoader.load("typefaceファイルのパス", (font) => {
-        //間違ったコード
+        //間違ったコード → font インスタンスをそのまま渡している
         const TextGeometry("Hello!", font);
 
-        // 正しいコード
+        // 正しいコード → font インスタンスをオブジェクトに入れている
         const TextGeometry("Hello!", { font });
     })
     ```
@@ -86,6 +89,8 @@
     - TextureLoader と同じ引数をとる
 
     - TextureLoader とは異なり、load 関数はロードしたファイルを元に作成したインスタンスを返却しない
+
+    - 第二引数の onload コールバック関数は Font インスタンスを引数として受け取る
 
     ```js
     fontLoader.load("typefaceファイルのパス", (font) => {
@@ -224,10 +229,22 @@ Font
     - 値を大きくすればすれほど エッジの丸みが滑らかになるが、処理の負荷は大きくなる
 
     <img src="./img/TextGeometry-BevelSegment_1.png" />
-    
+
 ---
 
 ### Bevel とは
 
 - オブジェクトのエッジや角を滑らかにすること
+
+<img src="./img/Bevel_1.png" />
+
+引用: [Bevel](https://wiki.blender.jp/Dev:Source/Modeling/Bevel)
+
+<br>
+
+- Bevel の面を多くすれば多くするだけオブジェクトのエッジをより滑らかにすることがでできる
+
+<img src="./img/Bevel_2.jpg" />
+
+引用: [ベベル](https://cgworld.jp/terms/ベベル.html)
 
