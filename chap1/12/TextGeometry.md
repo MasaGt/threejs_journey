@@ -100,6 +100,48 @@
     ```
 
 <br>
+
+#### Three.js がデフォルトで用意している typeface を利用する方法
+
+1. Three.js がデフォルトで用意している typeface の json ファイルをインポートする
+
+    ```js
+    import helvetker from "three/examples/fonts/helvetiker_regular.typeface.json";
+    ```
+
+<br>
+
+2. FontLoader の parse 関数を使って、インポートした typeface を Font オブジェクトに変換する
+
+    - *インポートした helvetker は Object 型のデータになっている
+
+    ```js
+    import helvetker from "three/examples/fonts/helvetiker_regular.typeface.json";
+    import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+
+    const fontLoader = new FontLoader():
+    // インポートした json ファイルから Font インスタンスを作成
+    const font = fontLoader.parse(helvetker);
+    ```
+
+<br>
+
+3. parse 関数から取得した Font インスタンスをもとに TextGeometry を作成
+
+    ```js
+    import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+    ~~省略~~
+
+    // インポートした json ファイルから Font インスタンスを作成
+    const font = fontLoader.parse(helvetker);
+
+    // TextGeometry の作成
+    const geometry = new TextGeometry("Hi", { font });
+
+    // あとはマテリアル & メッシュの作成など
+    ```
+
+<br>
 <br>
 
 参考サイト
