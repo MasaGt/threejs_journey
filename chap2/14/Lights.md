@@ -196,7 +196,7 @@ directionalLight.target = target;
 
     - 第一引数: ライトの色 (Integer)
     - 第二引数: ライトの強さ (Float)
-    - 第三引数: 光の届く距離 (Number)
+    - 第三引数: 光の届く距離 (Float)
         - デフォルトは0 = 光は無限に届く
 
         <img src="./img/Point-Light_1.png" />
@@ -300,4 +300,302 @@ directionalLight.target = target;
 
 <br>
 
-#### RectAreaLight をいろんな方向に向けてみる
+### RectAreaLight Helper を利用して RectAreaLight の形状、向きなどを可視化する
+
+1. RectAreaLightHelper をインポートする
+
+    - RectAreaLightHelper は add-on なので別途インポートする
+
+    ```js
+    import { RectAreaLightHelper } from 'three/addons/helpers/RectAreaLightHelper.js';
+    ```
+
+<br>
+
+2. RectAreaLightHelper インスタンスを作成する
+
+    - 引数: RectAreaLight インスタンス
+
+    ```js
+    const light = new THREE.RectAreaLight( 0xffffff, 1.0, 5, 5);
+
+    // RectAreaLightHelper インスタンス作成
+    const helper = new RectAreaLightHelper(light);
+    ```
+
+<br>
+
+3. **RectAreaLight インスタンス** に RectAreaLightHelper インスタンスを追加する
+
+    - *sceneに追加ではないことに注意
+
+    - RectAreaLight はデフォルトだと後ろ向きらしい
+
+    ```js
+    light.add(helper);
+    ```
+
+<img src="./img/Rect-Area-Light_3.gif" />
+
+<br>
+
+*RectAreaLightHelper の注意点
+
+- RectAreaLight は物体に落とす光だけが見える。
+    → RectAreaLightHelper は光源を可視化するが、RectAreaLight では光源は見えない
+    
+<img src="./img/Rect-Area-Light_7.gif" />
+
+<br>
+
+#### RectAreaLight を移動したり、いろんな方向に向けてみる
+
+ポイント
+
+- RectAreaLight の位置を変更するのは position プロパティで行う
+    - デフォルトは (0,0,0)
+
+- RectAreaLight の向きを変更するのは以下の2つの方法がある
+    - lookAt() で向く位置を指定する
+    - rotation プロパティでどのぐらい回転するかを指定する
+
+<br>
+
+RectAreaLight の移動
+
+```js
+rectAreaLight.position.x = 2;
+rectAreaLight.position.y = 2;
+rectAreaLight.position.z = 2;
+
+// もしくは
+rectAreaLight.position.set(2, 2, 2);
+```
+
+<img src="./img/Rect-Area-Light_4.gif" />
+
+<br>
+
+RectAreaLight の向きを変える
+
+- RectAreaLight.lookAt() で向く位置を指定する方法
+
+    ```js
+    rectAreaLight.lookAt(new THREE.Vector3(2, 0, 0));
+
+    //　もしくは
+    rectAreaLight.lookAt(2, 0, 0);
+    ```
+
+    <img src="./img/Rect-Area-Light_5.gif" />
+
+<br>
+
+- RectAreaLight.rotation プロパティでどのぐらい回転するかを指定する方法
+
+    ```js
+    rectAreaLight.rotation.y = Math.PI * 0.5;
+    ```
+
+    <img src="./img/Rect-Area-Light_6.gif" />
+
+---
+
+### Spot Light
+
+- 単一の点から一方向に放出され、円錐に沿って放出される光源
+
+- その名の通りスポットライトや懐中電灯をイメージするとわかりやすい
+
+#### Spot Light をシーンに追加する
+
+1. SpotLight インスタンスを作成する
+
+    - 第一引数: 光の色 (Integer)
+    - 第二引数: 光の強さ (Float)
+    - 第三引数: 光の届く距離 (Float)
+    - 第四引数: 照射角 (光線軸とのなす角度) (Float)
+        - ラジアンで指定する必要がある
+
+        <img src="./img/Spot-Light_1.png" />
+    
+    <br>
+
+    - 第五引数: オブジェクトに当たった光の光線軸からの減退具体(Float)
+        - 光の輪郭のぼやけ具合という理解でもいい
+        - 0 ~ 1の範囲で指定する
+        - 0: 光の輪郭がすごくはっきり映る
+        - 1: 光の輪郭はぼやけて映る
+
+        <img src="./img/Spot-Light_2.png" />
+
+    <br>
+
+    - 第六引数: 光源からの光の減退具合 (Float)
+
+        <img src="./img/Spot-Light_3.png" />
+
+    ```js
+    const spotLight = new THREE.SpotLight(
+        0x00ff00,
+        5,
+        5,
+        Math.PI * 0.1,
+        0.25,
+        1);
+    ```
+
+<br>
+
+2. SpotLight インスタンスをシーンに追加する
+
+    ```js
+    scene.add(spotLight);
+    ```
+
+<img src="./img/Spot-Light_4.gif" />
+
+<br>
+
+#### SpotLightHelper で Spot Light が照らす範囲を可視化する
+
+1. SpotLightHelper インスタンスを作成する
+
+    - 第一引数: SpotLight インスタンス
+    - 第二引数: SpotLightHelper の枠の色
+        - 省略すると SpotLight の光の色と同じ色になる
+
+    ```js
+    const spotLightHelper = new THREE.SpotLightHelper(
+        spotLight,
+        new THREE.Color(0xff0000)
+    );
+    ```
+
+<br>
+
+2. SpotLightHelper インスタンスをシーンに追加する
+
+    ```js
+    scene.add(spotLightHelper);
+    ```
+
+<img src="./img/Spot-Light_5.gif" />
+
+<br>
+
+SpotLightHelper を使う際の注意点
+
+- SpotLightHelper インスタンスをシーンに追加以降、 spotLight の位置や向きなどを変更した場合、 SpotLightHelper インスタンスを update() で更新する必要がある
+
+    ```js
+    // SpotLightHelperの更新を忘れた場合
+    scene.add(spotLightHelper);
+
+    // Spot Light の向きの変更
+    spotLight.target.position.set(-1, -2, 0);
+    ```
+
+    <img src="./img/Spot-Light_8.png" />
+
+    <br>
+
+    ```js
+    scene.add(spotLightHelper);
+
+    // Spot Light の向きの変更
+    spotLight.target.position.set(-1, -2, 0);
+
+    // ★SpotLightで何らかの変更を行なった場合は、SpotLightHelperの更新を忘れずに
+    spotLightHelper.update();
+    ```
+
+    <img src="./img/Spot-Light_9.png" />
+
+<br>
+
+#### Spot Light の位置や向ける方向を変えてみる
+
+- Spot Light の光源の位置を変更する
+
+    - SpotLight.position プロティで設定する
+
+    ```js
+    spotLight.position.x = 1;
+    spotLight.position.y = 2;
+    spotLight.position.z = 3;
+
+    // もしくは set() で一度で指定する
+    spotLight.position.set(1, 2, 3);
+    ```
+
+<br>
+
+- Spot Light の向ける方向を変更する
+
+    - SpotLight.target で設定する
+
+    - target プロパティを設定したら、その target を**シーンに追加する必要がある**
+
+    - target に指定するのは Object3D インスタンス (以下の2つの方法がある)
+
+        - target プロパティにデフォルトで設定されている Object3D インスタンスの position を変更する
+
+            ```js
+            spotLight.target.position.set(-1, -2, -3);
+
+            // ★ターゲットをシーンに追加する
+            scene.add(spotLight.target)
+            ```
+
+            <img src="./img/Spot-Light_6.gif" />
+
+        <br>
+
+        - target プロパティに Spot Light を向けたいオブジェクトを設定する
+
+            ```js
+            const sphere = new THREE.Mesh(
+                new THREE.SphereGeometry(0.5, 32, 32),
+                new THREE.MeshStandardMaterial()
+            );
+            sphere.position.x = -1.5;
+
+            // target を sphere オブジェクトにする
+            spotLight.target = sphere;
+
+            // ★ターゲットをシーンに追加する
+            scene.add(spotLight.target)
+            ```
+
+            <img src="./img/Spot-Light_7.gif" />
+
+<br>
+
+#### decay が負の値を取るとどうなるか
+
+- 光の距離が進むと明るくなり、近い距離だと暗くなるという現実的ではない光の表現になる
+
+    <img src="./img/Spot-Light_10.gif" />
+
+---
+
+### Baking
+
+- 基本的に Light は処理の重いオブジェクト
+
+- 処理の重さ的には、 Ambient Light などが一番軽く、 Point Light などが一番重い
+
+    Ambient Light, Hemisphere Light \< Directional Light, Point Light \< Spot Light, Rect Area Light
+
+- 多くの Light インスタンスをシーンに追加するとパフォーマンスの低下を招く
+
+- 解決策として、**テクスチャーに影も書き込む = ベイクする**
+
+    - しかし、カメラの角度を変えても影は変化しないというデメリットもある
+
+- 以下は、ベイクしたテクスチャの例
+
+    <img src="./img/Baked-Texture_1.jpg" />
+
+    引用: [three.js journey](https://threejs-journey.com)

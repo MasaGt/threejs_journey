@@ -25,8 +25,8 @@ scene.add(axesHelper);
  */
 
 // Ambient Light
-// const ambientLight = new THREE.AmbientLight(0xffffff, 1);
-// scene.add(ambientLight);
+const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+scene.add(ambientLight);
 
 // Directional Light
 // const directionalLight = new THREE.DirectionalLight(0x00fffc, 1);
@@ -47,12 +47,23 @@ scene.add(axesHelper);
 // scene.add(pointLight);
 
 // RectArea Light
-const rectAreaLight = new THREE.RectAreaLight(0x4e00ff, 6, 3, 3);
-// rectAreaLight.position.set(0, 0, 0);
-rectAreaLight.lookAt(0, 0, 1);
-scene.add(rectAreaLight);
-const rectLightHelper = new RectAreaLightHelper(rectAreaLight);
-rectAreaLight.add(rectLightHelper);
+// const rectAreaLight = new THREE.RectAreaLight(0x4e00ff, 6, 3, 3);
+// const rectAreaLight = new THREE.RectAreaLight(0xffffff, 1.0, 5, 5);
+// rectAreaLight.position.set(2, 2, 2);
+// rectAreaLight.lookAt(2, 0, 0);
+// rectAreaLight.rotation.y = Math.PI * 0.5;
+// scene.add(rectAreaLight);
+// const rectLightHelper = new RectAreaLightHelper(rectAreaLight);
+// rectAreaLight.add(rectLightHelper);
+
+// Spot Light
+const spotLight = new THREE.SpotLight(0x00ff00, 5, 5, Math.PI * 0.1, 0.25, 1);
+// spotLight.position.set(0, 2, 0);
+spotLight.target.position.set(0, -5, 0);
+scene.add(spotLight.target);
+scene.add(spotLight);
+const spotLightHelper = new THREE.SpotLightHelper(spotLight);
+scene.add(spotLightHelper);
 
 /**
  * Debug GUI
@@ -68,33 +79,94 @@ rectAreaLight.add(rectLightHelper);
 // guiPointLight.add(pointLight, "decay").min(-10).max(10);
 
 // rectAreaLight debug
-const helperConfig = {
-  on: true,
-};
-const guiRectAreaLight = gui.addFolder("RectAreaLight");
-guiRectAreaLight.add(rectAreaLight, "width").min(0).max(10);
-guiRectAreaLight.add(rectAreaLight, "height").min(0).max(10);
-gui.add(helperConfig, "on").onChange((on) => {
-  console.log(rectAreaLight.children);
-  const helper = rectAreaLight.getObjectByProperty(
-    "type",
-    "RectAreaLightHelper"
-  );
+// const helperConfig = {
+//   on: true,
+// };
+// const guiRectAreaLight = gui.addFolder("RectAreaLight");
+// guiRectAreaLight.add(rectAreaLight, "width").min(0).max(10);
+// guiRectAreaLight.add(rectAreaLight, "height").min(0).max(10);
+// gui.add(helperConfig, "on").onChange((on) => {
+//   console.log(rectAreaLight.children);
+//   const helper = rectAreaLight.getObjectByProperty(
+//     "type",
+//     "RectAreaLightHelper"
+//   );
 
-  if (on) {
-    // helperが設定されていなかったら
-    if (helper == undefined) {
-      // helperを追加
-      rectAreaLight.add(rectLightHelper);
-    }
-  } else {
-    // helperが設定されていたら
-    if (helper != undefined) {
-      // helperを削除
-      helper.removeFromParent();
-    }
-  }
+//   if (on) {
+//     // helperが設定されていなかったら
+//     if (helper == undefined) {
+//       // helperを追加
+//       rectAreaLight.add(rectLightHelper);
+//     }
+//   } else {
+//     // helperが設定されていたら
+//     if (helper != undefined) {
+//       // helperを削除
+//       helper.removeFromParent();
+//     }
+//   }
+// });
+
+// Spot Light Debug
+const helperUpdate = () => {
+  spotLightHelper.update();
+};
+const guiSpotLight = gui.addFolder("SpotLight");
+guiSpotLight.addColor(spotLight, "color").onChange(() => {
+  helperUpdate();
 });
+guiSpotLight.add(spotLight, "intensity").min(0).max(10);
+guiSpotLight
+  .add(spotLight, "distance")
+  .min(-10)
+  .max(10)
+  .onChange(() => {
+    helperUpdate();
+  });
+guiSpotLight
+  .add(spotLight, "angle")
+  .min(0)
+  .max(Math.PI / 2)
+  .onChange(() => {
+    helperUpdate();
+  });
+guiSpotLight
+  .add(spotLight, "penumbra")
+  .min(0)
+  .max(1)
+  .onChange(() => {
+    helperUpdate();
+  });
+guiSpotLight
+  .add(spotLight, "decay")
+  .min(-10)
+  .max(10)
+  .onChange(() => {
+    helperUpdate();
+  });
+guiSpotLight
+  .add(spotLight.position, "x")
+  .min(-10)
+  .max(10)
+  .onChange(() => {
+    helperUpdate();
+  });
+guiSpotLight
+  .add(spotLight.position, "y")
+  .min(-10)
+  .max(10)
+  .step(0.01)
+  .onChange(() => {
+    helperUpdate();
+  });
+guiSpotLight
+  .add(spotLight.position, "z")
+  .min(-10)
+  .max(10)
+  .onChange(() => {
+    helperUpdate();
+  });
+// helperUpdate();
 
 /**
  * Objects
@@ -107,8 +179,12 @@ material.roughness = 0.0;
 const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 32), material);
 sphere.position.x = -1.5;
 
+// pointing spot light to sphere
+// spotLight.target = sphere;
+// scene.add(spotLight.target);
+// helperUpdate();
+
 const cube = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), material);
-cube.position.x = 1;
 
 const torus = new THREE.Mesh(
   new THREE.TorusGeometry(0.3, 0.2, 32, 64),
@@ -121,7 +197,7 @@ plane.rotation.x = -Math.PI * 0.5;
 plane.position.y = -0.65;
 
 // scene.add(sphere, cube, torus, plane);
-scene.add(sphere, cube, plane);
+scene.add(plane);
 
 /**
  * Sizes
