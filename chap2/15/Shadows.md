@@ -188,14 +188,17 @@ Three.jsでは以下のライトが Drop Shadow を落とせる
 
     - ライトカメラのnearがオブジェクトから遠いとシャドウマップに小さく描画される
 
-        - テクスチャマッピングの時にチラつく = ジャぎる (理由は[こちら](../../chap1/10/Mipmap_TextureFiltering.md)を参照)
+        - シャドウマップにオブジェクトが小さく描画されると、影がテクスチャマッピングの時にチラつく = ジャぎる (理由は[こちら](../../chap1/10/Mipmap_TextureFiltering.md)を参照)
 
     <img src="./img/Optimizing-Shadows_3.png" />
 
 <br>
 
+#### ライトカメラへのアクセス
+
 - ライトカメラへは Light インスタンスの `shadow.camera` プロパティからアクセスすることができる
 
+    - `Light.shadow.camera` (Camera)
     - `Light.shadow.camera.near` (Float)
     - `Light.shadow.camera.far` (Float)
 
@@ -204,23 +207,336 @@ Three.jsでは以下のライトが Drop Shadow を落とせる
 #### ライトカメラの種類
 
 - Perspectvive camera
-    - Point Light / Spot Light がシャドウマップを作成する際に利用するライト視点のカメラ (シーンをレンダリングする時に利用するカメラと同じ)
+    - **Point Light / Spot Light** がシャドウマップを作成する際に利用するライト視点のカメラ **(シーンをレンダリングする時に利用するカメラと同じ)**
 
         - `Light.shadow.camera.fov`
         - `Light.shadow.camera.aspect`
 
 - Orthographic Camera
-    - Directional Light がシャドウマップを作成する際に利用するライト視点のカメラ (シーンをレンダリングする時に利用するカメラと同じ)
+    - **Directional Light** がシャドウマップを作成する際に利用するライト視点のカメラ **(シーンをレンダリングする時に利用するカメラと同じ)**
 
         - `Light.shadow.camera.top`
+            - ライトの position を原点として正の値をとる
+            - 値が大きいほど、カメラの上方向の範囲が大きくなる
+            - bottom より小さい値を設定するとカメラの上下が反転する
+            
+            <img src="./img/Light-Canera_1.png" />
+        
+        <br>
+
         - `Light.shadow.camera.bottom`
+            - ライトの position を原点として負の値をとる
+            - 値が小さいほど、カメラの下方向の範囲が大きくなる
+            - top より大きい値を設定するとカメラの上下が反転する
+
+            <img src="./img/Light-Canera_2.png" />
+
+        <br>
+
         - `Light.shadow.camera.left`
+            - ライトの position を原点として負の値をとる
+            - 値が小さいほど、カメラの左方向の範囲が大きくなる
+            - right より大きい値を設定するとカメラの左右が反転する
+
+            <img src="./img/Light-Canera_3.png" />
+
+        <br>
+
         - `Light.shadow.camera.right`
+            - ライトの position を原点として正の値をとる
+            - 値が大きいほど、カメラの右方向の範囲が大きくなる
+            - left より小さい値を設定するとカメラの左右が反転する
+
+            <img src="./img/Light-Canera_4.png" />
 
 <br>
 
 #### CameraHelper の利用
 
+- ライトカメラを可視化し、ライトカメラの範囲を変更しやすくする
+
+1. CameraHelper インスタンスを作成する
+
+    - 第一引数: カメラインスタンス (Camera)
+
+    ```js
+    const cameraHelper = new THREE.CameraHelper(directionalLight.shadow.camera);
+    ```
+
+<br>
+
+2. CameraHelper インスタンスをシーンに追加する
+
+    ```js
+    scence.add(cameraHelper);
+    ```
+
+<img src="./img/Camera-Helper_1.png" />
+
+<br>
+
+#### ライトカメラの範囲の修正
+
+- デフォルトだと、far面が遠過ぎたり、top, bottom, left, right が大き過ぎたりする
+
+    <img src="./img/Camera-Helper_2.png" />
+
+    <br>
+
+    - その際に、[debugGUI](../../chap1/09/DebugUI.md) を利用すると実際にライトカメラの範囲を動かしならが確認できる
+
+        - カメラの範囲を変更した後は、 `Light.shadow.camera.updateProjectionMatrix()` と `CameraHelper.update()` をコールしないと、画面に反映されない
+
+    ```js
+    // Light camera Debug
+    const cameraDebug = gui.addFolder("Light Camera");
+    const updateLightCamera = () => {
+    directionalLight.shadow.camera.updateProjectionMatrix();
+    cameraHelper.update();
+    };
+
+    cameraDebug
+    .add(directionalLight.shadow.camera, "near")
+    .min(-100)
+    .max(10)
+    .onChange(() => {
+        updateLightCamera();
+    });
+
+    cameraDebug
+    .add(directionalLight.shadow.camera, "far")
+    .min(0)
+    .max(100)
+    .onChange(() => {
+        updateLightCamera();
+    });
+
+    cameraDebug
+    .add(directionalLight.shadow.camera, "top")
+    .min(-10)
+    .max(10)
+    .onChange(() => {
+        updateLightCamera();
+    });
+
+    cameraDebug
+    .add(directionalLight.shadow.camera, "bottom")
+    .min(-10)
+    .max(0)
+    .onChange(() => {
+        updateLightCamera();
+    });
+
+    cameraDebug
+    .add(directionalLight.shadow.camera, "right")
+    .min(0)
+    .max(10)
+    .onChange(() => {
+        updateLightCamera();
+    });
+
+    cameraDebug
+    .add(directionalLight.shadow.camera, "left")
+    .min(-10)
+    .max(0)
+    .onChange(() => {
+        updateLightCamera();
+    });
+    ```
+
+    <img src="./img/Camera-Helper_3.gif" />
+
+<br>
+
+#### ライトカメラの範囲修正と影の精度
+
+- カメラの平面上の範囲の修正は影の精度を向上させる
+    - カメラの範囲が広すぎると影がジャぎる
+
+    <img src="./img/Light-Camera_5.gif" />
+
+<br>
+
+- near, farの修正は影の精度にほとんど影響しないっぽい
+
+    - 以下のように、near と far を無駄に広く取っても、影は変化しない
+
+        <img src="./img/Light-Camera_6.gif" />
+
+    - しかし、無題に広い空間を計算させるより、必要最低限の空間の計算をさせた方がパフォーマンス的にいいらしい
+
+<br>
+
+- カメラの範囲がデフォルトのままでの影の見た目
+
+    <img src="./img/Optimizing-Shadows_1.png" />
+
+<br>
+
+- ライトカメラの範囲を修正した状態の影の見た目 (シャドウマップのサイズはデフォルトのまま)
+
+    <img src="./img/Light-Camera_7.png" />
+
+<br>
+
+#### ライトカメラの範囲修正の際の注意点
+
+- ライトカメラの範囲に必要なオブジェクトが入っていないと、影が見切れてしまう
+
+    <img src="./img/Light-Camera_8.png" />
+
+<br>
+
+- near, far 面に必要なオブジェクトが入っていないと、影がうまく落ちない
+
+    <img src="./img/Light-Camera_9.png" />
+
+<br>
+
+<img src="./img/Light-Camera_10.png" />
+
 ---
 
 ### Optimizing Shadows ~ シャドウマップのアルゴリズムの変更
+
+#### シャドウマップアルゴリズムの種類
+ 
+- THREE.BasicShadowMap
+
+    - フィルタリングなし (=ポイントサンプリング的なやつ)
+
+    - 影か影じゃないかの2色の色分け (=ジャギりやすい)
+
+    - 処理は早い
+
+    <img src="./img/Basic-Shadow-Map_1.png" />
+
+<br>
+
+- THREE.PCFShadowMap (Percentage-Closer Filtering)
+
+    - 影を落とす際のデフォルトのアルゴリズム
+
+    - イメージ的には[Bilinear Filtering](../../chap1/10/Mipmap_TextureFiltering.md)に近い
+
+        - 影の判定の結果、影を描画することになった場合、そのピクセルに対応するテクセルの周囲のテクセルも参照するフィルタリング方法
+
+    - 影 or 影ではない の 0 or 1 ではなく、周りのテクセルも参照し影の色の合成を行うので、ジャギりが緩和される
+
+    - THREE.BasicShadowMap よりは処理が重い
+
+    <img src="./img/PCF-Shadow-Map_1.png" />
+
+<br>
+
+- THREE.PCFSoftShadowMap
+
+    - THREE.PCFShadowMap と同じく Percentage-Closer Filtering　を用いるアルゴリズム
+
+    - THREE.PCFShadowMap よりもジャギりがないらしい
+
+    - THREE.PCFShadowMap よりも処理が重い
+
+    <img src="./img/PCF-Soft-Shadow-Map_1.png" />
+
+<br>
+
+- THREE.VSMShadowMap (Variance Shadow Map)
+    - Variance Shadow Map というアルゴリズムを用いる方法
+
+        - シャドウマップの各テクセルにライトカメラからの距離(深度値)と深度値の2乗を書き込む
+
+        - 深度値の2乗から分散を計算し、その分散値によって、光が届く確率を計算する
+
+        - 影の判定の結果、影を描画することになった場合、光が届く確率の高いところは影を薄く、光が届く確率の低いところは影を濃く描写する
+
+    <br>
+
+    - VSMShadowMap を利用すると、**影を落とされる設定だけをしているオブジェクトも影を落とす設定が有効になる**
+
+    - 処理は重い
+
+    <img src="./img/VSM-Shadow-Map_1.png" />
+
+<br>
+
+#### シャドウマップアルゴリズムの変更
+
+1. Rendere インスタンスの `shadowMap.type` プロパティに利用したいアルゴリズムを指定する
+
+    ```js
+    rendere.shadowMap.type = THREE.PCFSoftShadowMap;
+    ```
+
+<br>
+<br>
+
+参考サイト
+
+Three.js で利用できるアルゴリズムについて
+- [Three.jsこと始め](https://koro-koro.com/threejs-no1/#chapter-13)
+
+PCFアルゴリズムについて
+- [3Dゲームファンのための「Splinter Cell Chaos Theory」グラフィックス講座 UnrealEngine3.0より先に登場したプログラマブルシェーダ3.0作品](https://game.watch.impress.co.jp/docs/20050512/scct.htm)
+
+VSMアルゴリズムについて
+- [Variance Shadow Maps](http://asura.iaigiri.com/XNA_GS/xna33.html)
+
+[「メビリンス」ポートフォリオ](https://yonema.github.io/Mobyrinth_Portfolio/#68-vsm分散シャドウマップ)
+
+---
+
+#### 影の輪郭をぼやかす
+
+- [シャドウマッピングのアルゴリズム](#シャドウマップアルゴリズムの種類)を変更せずとも、影の輪郭をぼやかすことができる
+
+#### 影をぼやかす
+
+1. Light インスタンスの `shadow.radius` プロパティにてぼやけ具合を指定する
+
+    - 1以上の値を指定することで Cast Shadow がぼやける
+
+    - *シャドウマッピングのアルゴリズムが **THREE.BasicShadowMap と THREE.PCFSoftShadowMap** の時は shadow.radius にどんな値を設定しても反映されない
+
+    ```js
+    // *シャドウマッピングアルゴリズムはデフォルトのTHREE.PCFShadowMap
+
+    directionalLight.shadow.radisu = 10;
+    ```
+
+<img src="./img/Shadow-Blur_1.png" />
+
+<br>
+
+#### Light.shadow.raidus で影をぼやかす時の注意点
+
+- Cast Shadow を**全体的に**ぼやかすので、リアルな影の感じは薄まる
+
+<img src="./img/Shadow-Blur_2.png" />
+
+<br>
+
+#### 他の方法での影のぼやかし方
+
+1. シャドウマッピングアルゴリズムに THREE.PCFSoftShadowMap を選択
+
+    ```js
+    render.shadowMap.type = THREE.PCFSoftShadowMap;
+    ```
+
+<br>
+
+2. シャドウマップテクスチャのサイズを小さくする
+
+    ```js
+    directionalLight.shadow.mapSize.width = 512 / 2;
+    directionalLight.shadow.mapSize.height = 512 / 2;
+    ```
+
+    <img src="./img/PCF-Soft-Shadow-Map_2.png" />
+
+    <br>
+
+    - 以下はデフォルトの 512×512 のシャドウマップテクスチャを使った時の見え方
+
+    <img src="./img/PCF-Soft-Shadow-Map_1.png" />
