@@ -17,89 +17,147 @@ const scene = new THREE.Scene();
 /**
  * Lights
  */
+
 // Ambient light
-const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
 gui.add(ambientLight, "intensity").min(0).max(3).step(0.001);
 scene.add(ambientLight);
 
 // Directional light
-const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
 directionalLight.position.set(2, 2, -1);
 directionalLight.castShadow = true;
 // directionalLight.shadow.mapSize.width = 2048;
 // directionalLight.shadow.mapSize.height = 2048;
+directionalLight.shadow.mapSize.width = 512 / 2;
+directionalLight.shadow.mapSize.height = 512 / 2;
 // console.log(directionalLight.shadow);
 gui.add(directionalLight, "intensity").min(0).max(3).step(0.001);
 gui.add(directionalLight.position, "x").min(-5).max(5).step(0.001);
 gui.add(directionalLight.position, "y").min(-5).max(5).step(0.001);
 gui.add(directionalLight.position, "z").min(-5).max(5).step(0.001);
-scene.add(directionalLight);
+// scene.add(directionalLight);
 
 // Light camera optimization
-directionalLight.shadow.camera.far = 5;
+// directionalLight.shadow.camera.far = 5;
 directionalLight.shadow.camera.near = 1;
 directionalLight.shadow.camera.top = 1.5;
 directionalLight.shadow.camera.bottom = -3;
 directionalLight.shadow.camera.right = 3.5;
 directionalLight.shadow.camera.left = -3;
 
-// camera helper
-const cameraHelper = new THREE.CameraHelper(directionalLight.shadow.camera);
-scene.add(cameraHelper);
+// blurring directional shadow
+// directionalLight.shadow.radius = 10;
 
-// Light camera Debug
-const cameraDebug = gui.addFolder("Light Camera");
-const updateLightCamera = () => {
-  directionalLight.shadow.camera.updateProjectionMatrix();
-  cameraHelper.update();
+// directional camera helper
+// const cameraHelper = new THREE.CameraHelper(directionalLight.shadow.camera);
+// scene.add(cameraHelper);
+
+// Direcitional Light camera Debug
+// const cameraDebug = gui.addFolder("Directional Light Camera");
+// const updateLightCamera = () => {
+//   directionalLight.shadow.camera.updateProjectionMatrix();
+//   cameraHelper.update();
+// };
+
+// cameraDebug
+//   .add(directionalLight.shadow.camera, "near")
+//   .min(-10)
+//   .max(10)
+//   .onChange(() => {
+//     updateLightCamera();
+//   });
+
+// cameraDebug
+//   .add(directionalLight.shadow.camera, "far")
+//   .min(0)
+//   .max(100)
+//   .onChange(() => {
+//     updateLightCamera();
+//   });
+
+// cameraDebug
+//   .add(directionalLight.shadow.camera, "top")
+//   .min(-10)
+//   .max(10)
+//   .onChange(() => {
+//     updateLightCamera();
+//   });
+
+// cameraDebug
+//   .add(directionalLight.shadow.camera, "bottom")
+//   .min(-10)
+//   .max(0)
+//   .onChange(() => {
+//     updateLightCamera();
+//   });
+
+// cameraDebug
+//   .add(directionalLight.shadow.camera, "right")
+//   .min(0)
+//   .max(10)
+//   .onChange(() => {
+//     updateLightCamera();
+//   });
+
+// cameraDebug
+//   .add(directionalLight.shadow.camera, "left")
+//   .min(-10)
+//   .max(0)
+//   .onChange(() => {
+//     updateLightCamera();
+//   });
+
+// Spot Light
+const spotLight = new THREE.SpotLight(0xffffff, 4);
+spotLight.penumbra = 0;
+spotLight.decay = 0;
+spotLight.angle = Math.PI * 0.1;
+spotLight.castShadow = true;
+spotLight.updateMatrix();
+spotLight.position.set(0, 2, 2);
+scene.add(spotLight);
+spotLight.shadow.camera.fov = spotLight.angle;
+console.log(spotLight.shadow.camera.fov);
+// spotLight.shadow.camera.far = 4.5;
+
+// Spot Light Camera Helper
+const spotLightCameraHelper = new THREE.CameraHelper(spotLight.shadow.camera);
+scene.add(spotLightCameraHelper);
+
+// spot light camera debug
+const spotLightCameraDebug = gui.addFolder("Spot Light Camera");
+const updateSpotLightCamera = () => {
+  spotLight.shadow.camera.updateProjectionMatrix();
+  spotLight.updateProjectionMatrix();
+  spotLightCameraHelper.update();
 };
 
-cameraDebug
-  .add(directionalLight.shadow.camera, "near")
-  .min(-100)
-  .max(10)
-  .onChange(() => {
-    updateLightCamera();
-  });
-
-cameraDebug
-  .add(directionalLight.shadow.camera, "far")
-  .min(0)
-  .max(100)
-  .onChange(() => {
-    updateLightCamera();
-  });
-
-cameraDebug
-  .add(directionalLight.shadow.camera, "top")
-  .min(0)
-  .max(10)
-  .onChange(() => {
-    updateLightCamera();
-  });
-
-cameraDebug
-  .add(directionalLight.shadow.camera, "bottom")
+spotLightCameraDebug
+  .add(spotLight.shadow.camera, "near")
   .min(-10)
-  .max(0)
-  .onChange(() => {
-    updateLightCamera();
-  });
-
-cameraDebug
-  .add(directionalLight.shadow.camera, "right")
-  .min(0)
   .max(10)
   .onChange(() => {
-    updateLightCamera();
+    updateSpotLightCamera();
   });
 
-cameraDebug
-  .add(directionalLight.shadow.camera, "left")
+spotLightCameraDebug
+  .add(spotLight.shadow.camera, "far")
   .min(-10)
-  .max(0)
+  .max(500)
   .onChange(() => {
-    updateLightCamera();
+    updateSpotLightCamera();
+  });
+
+spotLightCameraDebug
+  .add(spotLight.shadow.camera, "fov")
+  .min(0)
+  .max(Math.PI * 0.5)
+  .step(0.01)
+  .onChange((v) => {
+    spotLight.angle = v;
+    console.log(spotLight.shadow.camera.fov);
+    updateSpotLightCamera();
   });
 
 /**
@@ -107,8 +165,11 @@ cameraDebug
  */
 const material = new THREE.MeshStandardMaterial();
 material.roughness = 0.7;
-gui.add(material, "metalness").min(0).max(1).step(0.001);
-gui.add(material, "roughness").min(0).max(1).step(0.001);
+
+// Material Debug
+const materialDebug = gui.addFolder("Material");
+materialDebug.add(material, "metalness").min(0).max(1).step(0.001);
+materialDebug.add(material, "roughness").min(0).max(1).step(0.001);
 
 /**
  * Objects
@@ -172,7 +233,10 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+// shadow config
 renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 /**
  * Animate
