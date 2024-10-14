@@ -109,55 +109,94 @@ directionalLight.shadow.camera.left = -3;
 //   });
 
 // Spot Light
-const spotLight = new THREE.SpotLight(0xffffff, 4);
-spotLight.penumbra = 0;
-spotLight.decay = 0;
-spotLight.angle = Math.PI * 0.1;
-spotLight.castShadow = true;
-spotLight.updateMatrix();
-spotLight.position.set(0, 2, 2);
-scene.add(spotLight);
-spotLight.shadow.camera.fov = spotLight.angle;
-console.log(spotLight.shadow.camera.fov);
-// spotLight.shadow.camera.far = 4.5;
+// const spotLight = new THREE.SpotLight(0xffffff, 4);
+// spotLight.castShadow = true;
+// spotLight.position.set(0, 2, 2);
+// scene.add(spotLight);
 
 // Spot Light Camera Helper
-const spotLightCameraHelper = new THREE.CameraHelper(spotLight.shadow.camera);
-scene.add(spotLightCameraHelper);
+// const spotLightCameraHelper = new THREE.CameraHelper(spotLight.shadow.camera);
+// scene.add(spotLightCameraHelper);
+// spotLight.updateMatrix();
+// spotLight.shadow.updateMatrices(spotLight);
+// spotLight.shadow.camera.updateProjectionMatrix();
+// spotLightCameraHelper.update();
+
+// Spot Light Helper
+// const spotLightHelper = new THREE.SpotLightHelper(spotLight, 0x00ff00);
+// scene.add(spotLightHelper);
 
 // spot light camera debug
-const spotLightCameraDebug = gui.addFolder("Spot Light Camera");
-const updateSpotLightCamera = () => {
-  spotLight.shadow.camera.updateProjectionMatrix();
-  spotLight.updateProjectionMatrix();
-  spotLightCameraHelper.update();
+// const spotLightCameraDebug = gui.addFolder("Spot Light Camera");
+// const updateSpotLightCamera = () => {
+//   spotLight.shadow.camera.updateProjectionMatrix();
+//   spotLightCameraHelper.update();
+//   spotLightHelper.update();
+// };
+
+// spotLightCameraDebug
+//   .add(spotLight.shadow.camera, "near")
+//   .min(-10)
+//   .max(10)
+//   .onChange(() => {
+//     updateSpotLightCamera();
+//   });
+
+// spotLightCameraDebug
+//   .add(spotLight.shadow.camera, "far")
+//   .min(-10)
+//   .max(500)
+//   .step(0.01)
+//   .onChange(() => {
+//     updateSpotLightCamera();
+//   });
+
+// spotLightCameraDebug
+//   .add(spotLight, "angle")
+//   .min(0)
+//   .max(Math.PI)
+//   .step(0.01)
+//   .onChange(() => {
+//     updateSpotLightCamera();
+//   });
+
+// Point Light
+const pointLight = new THREE.PointLight(0xffffff, 3);
+pointLight.castShadow = true;
+pointLight.shadow.camera.far = 5;
+pointLight.shadow.camera.near = 1;
+pointLight.shadow.camera.fov = 120;
+pointLight.position.set(0, 2, 2);
+scene.add(pointLight);
+
+// Point Light Camera Helper
+const pointLightCameraHelper = new THREE.CameraHelper(pointLight.shadow.camera);
+scene.add(pointLightCameraHelper);
+
+// Point Light Camera Debug
+const pointLightCameraUpdate = () => {
+  pointLight.shadow.camera.updateProjectionMatrix();
+  pointLightCameraHelper.update();
 };
 
-spotLightCameraDebug
-  .add(spotLight.shadow.camera, "near")
+const pointLightCameraDebug = gui.addFolder("Point Light Camera");
+
+pointLightCameraDebug
+  .add(pointLight.shadow.camera, "near")
   .min(-10)
   .max(10)
-  .onChange(() => {
-    updateSpotLightCamera();
-  });
-
-spotLightCameraDebug
-  .add(spotLight.shadow.camera, "far")
-  .min(-10)
-  .max(500)
-  .onChange(() => {
-    updateSpotLightCamera();
-  });
-
-spotLightCameraDebug
-  .add(spotLight.shadow.camera, "fov")
-  .min(0)
-  .max(Math.PI * 0.5)
   .step(0.01)
-  .onChange((v) => {
-    spotLight.angle = v;
-    console.log(spotLight.shadow.camera.fov);
-    updateSpotLightCamera();
+  .onChange(() => {
+    pointLightCameraUpdate();
+  });
+
+pointLightCameraDebug
+  .add(pointLight.shadow.camera, "far")
+  .min(-10)
+  .max(1000)
+  .step(0.01)
+  .onChange(() => {
+    pointLightCameraUpdate();
   });
 
 /**
@@ -183,6 +222,13 @@ plane.position.y = -0.5;
 plane.receiveShadow = true;
 
 scene.add(sphere, plane);
+
+// cube
+// const cube = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), material);
+// cube.position.z = 1.5;
+// cube.position.x = 1.5;
+// cube.castShadow = true;
+// scene.add(cube);
 
 /**
  * Sizes
@@ -257,3 +303,4 @@ const tick = () => {
 };
 
 tick();
+console.log(`fov: ${spotLight.shadow.camera.fov}`);
