@@ -89,6 +89,35 @@ bush4.scale.set(0.15, 0.15, 0.15);
 house.add(bush1, bush2, bush3, bush4);
 
 /**
+ * Graves
+ */
+const graves = new THREE.Group();
+scene.add(graves);
+
+const graveGeometry = new THREE.BoxGeometry(0.6, 0.8, 0.2);
+const graveMaterial = new THREE.MeshStandardMaterial();
+for (let i = 0; i < 30; i++) {
+  const grave = new THREE.Mesh(graveGeometry, graveMaterial);
+
+  // x & z position
+  const angle = Math.PI * 2 * Math.random();
+  const expansion = Math.random() * 4 + 3;
+  const positionX = Math.sin(angle) * expansion;
+  const positionZ = Math.cos(angle) * expansion;
+
+  // y position
+  const positionY = Math.random() * 0.4;
+  grave.position.set(positionX, positionY, positionZ);
+
+  // rotation
+  grave.rotation.x = (Math.random() - 0.5) * 0.4;
+  grave.rotation.y = (Math.random() - 0.5) * 0.4;
+  grave.rotation.z = (Math.random() - 0.5) * 0.4;
+
+  graves.add(grave);
+}
+
+/**
  * Lights
  */
 // Ambient light
