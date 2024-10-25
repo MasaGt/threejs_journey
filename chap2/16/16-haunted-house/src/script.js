@@ -19,25 +19,78 @@ const scene = new THREE.Scene();
 const axesHepler = new THREE.AxesHelper(2);
 scene.add(axesHepler);
 
-// Textures
+/**
+ * Textures
+ */
 const textuerLoader = new THREE.TextureLoader();
-const doorColorMap = textuerLoader.load("./door/color.jpg");
-doorColorMap.colorSpace = THREE.SRGBColorSpace;
+
+// Door Textures
+const doorColorTexture = textuerLoader.load("./door/color.jpg");
+doorColorTexture.colorSpace = THREE.SRGBColorSpace;
+
+// Floor Textures
+const floorAlphaTexture = textuerLoader.load("./floor/alpha.jpg");
+const floorARMTexture = textuerLoader.load(
+  "./floor/coast_sand_rocks_02_arm_1k/coast_sand_rocks_02_arm_1k.jpg"
+);
+const floorColorTexture = textuerLoader.load(
+  "./floor/coast_sand_rocks_02_arm_1k/coast_sand_rocks_02_diff_1k.jpg"
+);
+floorColorTexture.colorSpace = THREE.SRGBColorSpace;
+const floorDisplacementTexture = textuerLoader.load(
+  "./floor/coast_sand_rocks_02_arm_1k/coast_sand_rocks_02_disp_1k.jpg"
+);
+const floorNormalTexture = textuerLoader.load(
+  "./floor/coast_sand_rocks_02_arm_1k/coast_sand_rocks_02_nor_gl_1k.jpg"
+);
+
+// 繰り返し設定
+floorARMTexture.wrapS = THREE.RepeatWrapping;
+floorARMTexture.wrapT = THREE.RepeatWrapping;
+floorARMTexture.repeat.x = 8;
+floorARMTexture.repeat.y = 8;
+floorColorTexture.wrapS = THREE.RepeatWrapping;
+floorColorTexture.wrapT = THREE.RepeatWrapping;
+floorColorTexture.repeat.x = 8;
+floorColorTexture.repeat.y = 8;
+floorDisplacementTexture.wrapS = THREE.RepeatWrapping;
+floorDisplacementTexture.wrapT = THREE.RepeatWrapping;
+floorDisplacementTexture.repeat.x = 8;
+floorDisplacementTexture.repeat.y = 8;
+floorNormalTexture.wrapS = THREE.RepeatWrapping;
+floorNormalTexture.wrapT = THREE.RepeatWrapping;
+floorNormalTexture.repeat.x = 8;
+floorNormalTexture.repeat.y = 8;
 
 /**
  * House
  */
 // Floor
 const floor = new THREE.Mesh(
-  new THREE.PlaneGeometry(20, 20),
-  new THREE.MeshStandardMaterial({ color: 0x000000 })
+  new THREE.PlaneGeometry(20, 20, 100, 100),
+  new THREE.MeshStandardMaterial({
+    map: floorColorTexture,
+    transparent: true,
+    alphaMap: floorAlphaTexture,
+    displacementMap: floorDisplacementTexture,
+    displacementScale: 0.3,
+    displacementBias: -0.25,
+    normalMap: floorNormalTexture,
+    aoMap: floorARMTexture,
+    roughnessMap: floorARMTexture,
+    metalnessMap: floorARMTexture,
+  })
 );
 floor.rotation.x = -(Math.PI * 0.5);
 scene.add(floor);
 
+// Displacement Bias Debug
+const floorDebug = gui.addFolder("Floor");
+floorDebug.add(floor.material, "displacementBias").min(-5).max(5).step(0.01);
+
 // House
 const house = new THREE.Group();
-scene.add(house);
+// scene.add(house);
 
 // Walls
 const walls = new THREE.Mesh(
@@ -45,7 +98,7 @@ const walls = new THREE.Mesh(
   new THREE.MeshStandardMaterial({ color: 0xff0000 })
 );
 walls.position.y = 2.5 * 0.5;
-house.add(walls);
+// house.add(walls);
 
 // Roof
 const roof = new THREE.Mesh(
@@ -54,17 +107,17 @@ const roof = new THREE.Mesh(
 );
 roof.rotation.y = Math.PI * 0.25;
 roof.position.y = 2.5 + 0.75; //wallsの高さ + 屋根の高さ半分 だけ上に移動させる
-house.add(roof);
+// house.add(roof);
 
 // Door
 const door = new THREE.Mesh(
   new THREE.PlaneGeometry(2.2, 2.2),
-  new THREE.MeshStandardMaterial({ map: doorColorMap })
+  new THREE.MeshStandardMaterial({ map: doorColorTexture })
 );
 door.position.z = 2.01; //Z軸において、Walls のほんの少しだけ前に移動させる
 // door.position.yを0.1 分下げる理由: doorを完全に地面から出すと、doorテクスチャの下の余白まで映るのでドアが浮いて見える
 door.position.y = 1; //doorの高さの半分 - 0.1 だけ上に移動させる
-house.add(door);
+// house.add(door);
 
 // Bushes
 const bushGeometry = new THREE.SphereGeometry(1, 16, 16);
@@ -86,7 +139,7 @@ const bush4 = new THREE.Mesh(bushGeometry, bushMaterial);
 bush4.position.set(-1, 0.05, 2.5);
 bush4.scale.set(0.15, 0.15, 0.15);
 
-house.add(bush1, bush2, bush3, bush4);
+// house.add(bush1, bush2, bush3, bush4);
 
 /**
  * Graves
@@ -114,7 +167,7 @@ for (let i = 0; i < 30; i++) {
   grave.rotation.y = (Math.random() - 0.5) * 0.4;
   grave.rotation.z = (Math.random() - 0.5) * 0.4;
 
-  graves.add(grave);
+  // graves.add(grave);
 }
 
 /**
