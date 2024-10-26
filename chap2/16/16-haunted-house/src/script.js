@@ -320,6 +320,69 @@ const directionalLight = new THREE.DirectionalLight(
 directionalLight.position.set(3, 2, -8);
 scene.add(directionalLight);
 
+// Directional Light Camera Helper
+const directionalLightCameraHelper = new THREE.CameraHelper(
+  directionalLight.shadow.camera
+);
+directionalLightCameraHelper.visible = false;
+scene.add(directionalLightCameraHelper);
+
+// Directional Light Camera Debug
+const updateDiretionalLightCamera = () => {
+  directionalLight.shadow.camera.updateProjectionMatrix();
+  directionalLightCameraHelper.update();
+};
+const directionalLightCameraDebug = gui.addFolder("Directional Light Camera");
+directionalLightCameraDebug.add(directionalLightCameraHelper, "visible");
+directionalLightCameraDebug
+  .add(directionalLight.shadow.camera, "far")
+  .min(0)
+  .max(500)
+  .step(0.1)
+  .onChange(() => {
+    updateDiretionalLightCamera();
+  });
+directionalLightCameraDebug
+  .add(directionalLight.shadow.camera, "near")
+  .min(-10)
+  .max(100)
+  .step(0.1)
+  .onChange(() => {
+    updateDiretionalLightCamera();
+  });
+directionalLightCameraDebug
+  .add(directionalLight.shadow.camera, "left")
+  .min(-20)
+  .max(0)
+  .step(0.1)
+  .onChange(() => {
+    updateDiretionalLightCamera();
+  });
+directionalLightCameraDebug
+  .add(directionalLight.shadow.camera, "right")
+  .min(0)
+  .max(20)
+  .step(0.1)
+  .onChange(() => {
+    updateDiretionalLightCamera();
+  });
+directionalLightCameraDebug
+  .add(directionalLight.shadow.camera, "bottom")
+  .min(-20)
+  .max(0)
+  .step(0.1)
+  .onChange(() => {
+    updateDiretionalLightCamera();
+  });
+directionalLightCameraDebug
+  .add(directionalLight.shadow.camera, "top")
+  .min(0)
+  .max(20)
+  .step(0.1)
+  .onChange(() => {
+    updateDiretionalLightCamera();
+  });
+
 // Point Light
 const pointLight = new THREE.PointLight(
   lightConfig.colorDoorLight,
@@ -336,7 +399,7 @@ house.add(pointLightHelper);
 pointLightHelper.visible = false;
 
 // Point Light Debug
-const pointLightDebug = gui.addFolder("Point Light");
+const pointLightDebug = gui.addFolder("Door Point Light");
 pointLightDebug
   .add(pointLight.position, "x")
   .min(-10)
@@ -396,6 +459,46 @@ const ghost3 = new THREE.PointLight(
 
 scene.add(ghost1, ghost2, ghost3);
 
+// ゴーストライトのライトカメラのデバッグ
+const updateGhostLightCamera = () => {
+  ghost1.shadow.camera.updateProjectionMatrix();
+  ghost1LightCameraHelper.update();
+  ghost2.shadow.camera.updateProjectionMatrix();
+  ghost2LightCameraHelper.update();
+  ghost3.shadow.camera.updateProjectionMatrix();
+  ghost3LightCameraHelper.update();
+};
+const ghost1LightCameraHelper = new THREE.CameraHelper(ghost1.shadow.camera);
+scene.add(ghost1LightCameraHelper);
+const ghost2LightCameraHelper = new THREE.CameraHelper(ghost2.shadow.camera);
+scene.add(ghost2LightCameraHelper);
+const ghost3LightCameraHelper = new THREE.CameraHelper(ghost3.shadow.camera);
+scene.add(ghost3LightCameraHelper);
+ghost1LightCameraHelper.visible = false;
+ghost2LightCameraHelper.visible = false;
+ghost3LightCameraHelper.visible = false;
+
+const ghostLightCameraDebug = gui.addFolder("Ghost Lights");
+ghostLightCameraDebug.add(ghost1LightCameraHelper, "visible");
+ghostLightCameraDebug
+  .add(ghost1.shadow.camera, "near")
+  .min(0)
+  .max(20)
+  .onChange((val) => {
+    ghost2.shadow.camera.near = val;
+    ghost3.shadow.camera.near = val;
+    updateGhostLightCamera();
+  });
+ghostLightCameraDebug
+  .add(ghost1.shadow.camera, "far")
+  .min(0)
+  .max(500)
+  .onChange((val) => {
+    ghost2.shadow.camera.far = val;
+    ghost3.shadow.camera.far = val;
+    updateGhostLightCamera();
+  });
+
 /**
  * Sizes
  */
@@ -445,6 +548,69 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+/**
+ * Shadows
+ */
+// Renderer
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+// Lights
+directionalLight.castShadow = true;
+ghost1.castShadow = true;
+ghost2.castShadow = true;
+ghost3.castShadow = true;
+
+// Objects
+roof.castShadow = true;
+walls.castShadow = true;
+floor.receiveShadow = true;
+graves.children.forEach((grave) => {
+  grave.castShadow = true;
+});
+
+/**
+ * Shadow Optimization
+ */
+// Diretioanl Light ShadowMap Size
+directionalLight.shadow.mapSize.set(256, 256);
+// Diretional Light Camera
+directionalLight.shadow.camera.near = 1;
+directionalLight.shadow.camera.far = 20;
+directionalLight.shadow.camera.left = -8;
+directionalLight.shadow.camera.right = 8;
+directionalLight.shadow.camera.bottom = -8;
+directionalLight.shadow.camera.top = 8;
+// Update Diretional Light Camera Debug
+const diretionalLightCameraDebugs = directionalLightCameraDebug.controllers;
+diretionalLightCameraDebugs.forEach((debug) => {
+  debug.updateDisplay();
+});
+updateDiretionalLightCamera();
+
+// Ghost Light ShadowMap Size
+ghost1.shadow.mapSize.set(256, 256);
+ghost2.shadow.mapSize.set(256, 256);
+ghost3.shadow.mapSize.set(256, 256);
+// Ghost Light Camera
+ghost1.shadow.camera.far = 10;
+ghost2.shadow.camera.far = 10;
+ghost3.shadow.camera.far = 10;
+// Update Ghost Light Camera Debug
+const ghostLightCameraDebugs = ghostLightCameraDebug.controllers;
+ghostLightCameraDebugs.forEach((debug) => {
+  debug.updateDisplay();
+});
+updateGhostLightCamera();
+
+/**
+ * GUI
+ */
+//Close all the tabs (folders)
+gui.folders.forEach((folder) => {
+  folder.close();
+});
 
 /**
  * Animate
