@@ -361,6 +361,42 @@ pointLightDebug
 pointLightDebug.add(pointLightHelper, "visible");
 
 /**
+ * Ghosts
+ */
+
+//ゴーストライトの位置
+const ghostConfig = {
+  ghost1Color: 0x8800ff,
+  ghost2Color: 0xff0088,
+  ghost3Color: 0xff0000,
+  ghostLightIntensity: 6,
+  ghost1Radius: 4,
+  ghost2Radius: 5,
+  ghost3Radius: 6,
+  ghost1Speed: 0.5,
+  ghost2Speed: 0.38,
+  ghost3Speed: 0.23,
+  ghostYRandomness1: 2.34,
+  ghostYRandomness2: 3.45,
+};
+const ghost1 = new THREE.PointLight(
+  ghostConfig.ghost1Color,
+  ghostConfig.ghostLightIntensity
+);
+
+const ghost2 = new THREE.PointLight(
+  ghostConfig.ghost2Color,
+  ghostConfig.ghostLightIntensity
+);
+
+const ghost3 = new THREE.PointLight(
+  ghostConfig.ghost3Color,
+  ghostConfig.ghostLightIntensity
+);
+
+scene.add(ghost1, ghost2, ghost3);
+
+/**
  * Sizes
  */
 const sizes = {
@@ -422,6 +458,31 @@ const tick = () => {
 
   // Update controls
   controls.update();
+
+  // Ghost move
+  const ghost1Angle = elapsedTime * ghostConfig.ghost1Speed;
+  ghost1.position.x = Math.cos(ghost1Angle) * ghostConfig.ghost1Radius;
+  ghost1.position.z = Math.sin(ghost1Angle) * ghostConfig.ghost1Radius;
+  ghost1.position.y =
+    Math.sin(ghost1Angle) *
+    Math.sin(ghost1Angle * ghostConfig.ghostYRandomness1) *
+    Math.sin(ghost1Angle * ghostConfig.ghostYRandomness2);
+
+  const ghost2Angle = -(elapsedTime * ghostConfig.ghost2Speed);
+  ghost2.position.x = Math.cos(ghost2Angle) * ghostConfig.ghost2Radius;
+  ghost2.position.z = Math.sin(ghost2Angle) * ghostConfig.ghost2Radius;
+  ghost2.position.y =
+    Math.sin(ghost2Angle) *
+    Math.sin(ghost2Angle * ghostConfig.ghostYRandomness1) *
+    Math.sin(ghost2Angle * ghostConfig.ghostYRandomness2);
+
+  const ghost3Angle = elapsedTime * ghostConfig.ghost3Speed;
+  ghost3.position.x = Math.cos(ghost3Angle) * ghostConfig.ghost3Radius;
+  ghost3.position.z = Math.sin(ghost3Angle) * ghostConfig.ghost3Radius;
+  ghost3.position.y =
+    Math.sin(ghost3Angle) *
+    Math.sin(ghost3Angle * ghostConfig.ghostYRandomness1) *
+    Math.sin(ghost3Angle * ghostConfig.ghostYRandomness2);
 
   // Render
   renderer.render(scene, camera);
