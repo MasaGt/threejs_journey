@@ -68,6 +68,12 @@
 
 ---
 
+### テクスチャの1回以下の繰り返し
+
+<img src="./img/Texture-Repeat_1.png" />
+
+---
+
 ### ARM 画像
 
 - PloyHeaven などのテクスチャがダウンロードできるサイトにて、 AO/Rough/Metal (ARM) というテクスチャがダウンロードできる時がある
