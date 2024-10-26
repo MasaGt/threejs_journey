@@ -298,13 +298,67 @@ for (let i = 0; i < 30; i++) {
  * Lights
  */
 // Ambient light
-const ambientLight = new THREE.AmbientLight("#ffffff", 0.5);
+const lightConfig = {
+  colorMoonLight: 0x86cdff,
+  colorDoorLight: 0xff7d46,
+  ambientLightIntensity: 0.275,
+  directionalLigtIntensity: 1,
+  pointLightIntensity: 5,
+};
+
+const ambientLight = new THREE.AmbientLight(
+  lightConfig.colorMoonLight,
+  lightConfig.ambientLightIntensity
+);
 scene.add(ambientLight);
 
 // Directional light
-const directionalLight = new THREE.DirectionalLight("#ffffff", 1.5);
+const directionalLight = new THREE.DirectionalLight(
+  lightConfig.colorMoonLight,
+  lightConfig.directionalLigtIntensity
+);
 directionalLight.position.set(3, 2, -8);
 scene.add(directionalLight);
+
+// Point Light
+const pointLight = new THREE.PointLight(
+  lightConfig.colorDoorLight,
+  lightConfig.pointLightIntensity
+);
+pointLight.position.y = 2.2;
+pointLight.position.z = 2.5;
+house.add(pointLight);
+
+// Point Light Helper
+const sphereSize = 1;
+const pointLightHelper = new THREE.PointLightHelper(pointLight, sphereSize);
+house.add(pointLightHelper);
+pointLightHelper.visible = false;
+
+// Point Light Debug
+const pointLightDebug = gui.addFolder("Point Light");
+pointLightDebug
+  .add(pointLight.position, "x")
+  .min(-10)
+  .max(10)
+  .onChange(() => {
+    pointLightHelper.update();
+  });
+pointLightDebug
+  .add(pointLight.position, "y")
+  .min(-10)
+  .max(10)
+  .onChange(() => {
+    pointLightHelper.update();
+  });
+pointLightDebug
+  .add(pointLight.position, "z")
+  .min(-10)
+  .max(10)
+  .onChange(() => {
+    pointLightHelper.update();
+  });
+pointLightDebug.add(pointLightHelper, "visible");
 
 /**
  * Sizes
