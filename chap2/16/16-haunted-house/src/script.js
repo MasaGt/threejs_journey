@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { Timer } from "three/addons/misc/Timer.js";
 import GUI from "lil-gui";
+import { Sky } from "three/addons/objects/Sky.js";
 
 /**
  * Base
@@ -293,6 +294,18 @@ for (let i = 0; i < 30; i++) {
 
   graves.add(grave);
 }
+
+/**
+ * Sky
+ */
+const sky = new Sky();
+sky.material.uniforms["turbidity"].value = 10;
+sky.material.uniforms["rayleigh"].value = 3;
+sky.material.uniforms["mieCoefficient"].value = 0.1;
+sky.material.uniforms["mieDirectionalG"].value = 0.95;
+sky.material.uniforms["sunPosition"].value.set(0.3, -0.038, -0.95);
+sky.scale.set(100, 100, 100);
+scene.add(sky);
 
 /**
  * Lights
@@ -603,6 +616,24 @@ ghostLightCameraDebugs.forEach((debug) => {
   debug.updateDisplay();
 });
 updateGhostLightCamera();
+
+/**
+ * Fog
+ */
+const fogColor = 0x04343f;
+// scene.fog = new THREE.Fog(fogColor, 2, 6);
+
+// Fog Debug
+// const fogDebug = gui.addFolder("Fog");
+// fogDebug.add(scene.fog, "near").min(-2).max(10).step(0.1);
+// fogDebug.add(scene.fog, "far").min(-2).max(1000).step(0.1);
+
+/**
+ * FogExp2
+ */
+scene.fog = new THREE.FogExp2(fogColor, 0.1);
+const fogExp2Debug = gui.addFolder("FogExp2");
+fogExp2Debug.add(scene.fog, "density").min(-1).max(10).step(0.1);
 
 /**
  * GUI
