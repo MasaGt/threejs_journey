@@ -26,29 +26,29 @@ scene.add(axesHepler);
 const textuerLoader = new THREE.TextureLoader();
 
 // Door Textures
-const doorAlphaTexture = textuerLoader.load("./door/alpha.jpg");
-const doorAOTextuer = textuerLoader.load("./door/ambientOcclusion.jpg");
-const doorColorTexture = textuerLoader.load("./door/color.jpg");
+const doorAlphaTexture = textuerLoader.load("./door/alpha.webp");
+const doorAOTextuer = textuerLoader.load("./door/ambientOcclusion.webp");
+const doorColorTexture = textuerLoader.load("./door/color.webp");
 doorColorTexture.colorSpace = THREE.SRGBColorSpace;
-const doorHeightTexture = textuerLoader.load("./door/height.jpg");
-const doorMetalnessTexture = textuerLoader.load("./door/metalness.jpg");
-const doorNormalTexture = textuerLoader.load("./door/normal.jpg");
-const doorRoughnessTexture = textuerLoader.load("./door/roughness.jpg");
+const doorHeightTexture = textuerLoader.load("./door/height.webp");
+const doorMetalnessTexture = textuerLoader.load("./door/metalness.webp");
+const doorNormalTexture = textuerLoader.load("./door/normal.webp");
+const doorRoughnessTexture = textuerLoader.load("./door/roughness.webp");
 
 // Floor Textures
-const floorAlphaTexture = textuerLoader.load("./floor/alpha.jpg");
+const floorAlphaTexture = textuerLoader.load("./floor/alpha.webp");
 const floorARMTexture = textuerLoader.load(
-  "./floor/coast_sand_rocks_02_arm_1k/coast_sand_rocks_02_arm_1k.jpg"
+  "./floor/coast_sand_rocks_02_arm_1k/coast_sand_rocks_02_arm_1k.webp"
 );
 const floorColorTexture = textuerLoader.load(
-  "./floor/coast_sand_rocks_02_arm_1k/coast_sand_rocks_02_diff_1k.jpg"
+  "./floor/coast_sand_rocks_02_arm_1k/coast_sand_rocks_02_diff_1k.webp"
 );
 floorColorTexture.colorSpace = THREE.SRGBColorSpace;
 const floorDisplacementTexture = textuerLoader.load(
-  "./floor/coast_sand_rocks_02_arm_1k/coast_sand_rocks_02_disp_1k.jpg"
+  "./floor/coast_sand_rocks_02_arm_1k/coast_sand_rocks_02_disp_1k.webp"
 );
 const floorNormalTexture = textuerLoader.load(
-  "./floor/coast_sand_rocks_02_arm_1k/coast_sand_rocks_02_nor_gl_1k.jpg"
+  "./floor/coast_sand_rocks_02_arm_1k/coast_sand_rocks_02_nor_gl_1k.webp"
 );
 
 // 繰り返し設定 (Floor Textures)
@@ -71,28 +71,28 @@ floorNormalTexture.repeat.y = 8;
 
 // Wall Textures
 const wallARMTexture = textuerLoader.load(
-  "./wall/castle_brick_broken_06_1k/castle_brick_broken_06_arm_1k.jpg"
+  "./wall/castle_brick_broken_06_1k/castle_brick_broken_06_arm_1k.webp"
 );
 const wallColorTexture = textuerLoader.load(
-  "./wall/castle_brick_broken_06_1k/castle_brick_broken_06_diff_1k.jpg"
+  "./wall/castle_brick_broken_06_1k/castle_brick_broken_06_diff_1k.webp"
 );
 wallColorTexture.colorSpace = THREE.SRGBColorSpace;
 
 const wallNormalTexture = textuerLoader.load(
-  "./wall/castle_brick_broken_06_1k/castle_brick_broken_06_nor_gl_1k.jpg"
+  "./wall/castle_brick_broken_06_1k/castle_brick_broken_06_nor_gl_1k.webp"
 );
 
 // Roof Textures
 const roofColorTexture = textuerLoader.load(
-  "./roof/roof_slates_02_1k/roof_slates_02_diff_1k.jpg"
+  "./roof/roof_slates_02_1k/roof_slates_02_diff_1k.webp"
 );
 roofColorTexture.colorSpace = THREE.SRGBColorSpace;
 
 const roofARMTexture = textuerLoader.load(
-  "./roof/roof_slates_02_1k/roof_slates_02_arm_1k.jpg"
+  "./roof/roof_slates_02_1k/roof_slates_02_arm_1k.webp"
 );
 const roofNormalTexture = textuerLoader.load(
-  "./roof/roof_slates_02_1k/roof_slates_02_nor_gl_1k.jpg"
+  "./roof/roof_slates_02_1k/roof_slates_02_nor_gl_1k.webp"
 );
 
 // 繰り返し設定(Roof Textures)
@@ -105,30 +105,30 @@ roofNormalTexture.repeat.x = 3;
 
 // Bush Textures
 const bushColorTexture = textuerLoader.load(
-  "./bush/leaves_forest_ground_1k/leaves_forest_ground_diff_1k.jpg"
+  "./bush/leaves_forest_ground_1k/leaves_forest_ground_diff_1k.webp"
 );
 bushColorTexture.colorSpace = THREE.SRGBColorSpace;
 
 const bushARMTexture = textuerLoader.load(
-  "./bush/leaves_forest_ground_1k/leaves_forest_ground_arm_1k.jpg"
+  "./bush/leaves_forest_ground_1k/leaves_forest_ground_arm_1k.webp"
 );
 
 const bushNormalTexture = textuerLoader.load(
-  "./bush/leaves_forest_ground_1k/leaves_forest_ground_nor_gl_1k.jpg"
+  "./bush/leaves_forest_ground_1k/leaves_forest_ground_nor_gl_1k.webp"
 );
 
 // Grave Textures
 const graveColorTexture = textuerLoader.load(
-  "./grave/plastered_stone_wall_1k/plastered_stone_wall_diff_1k.jpg"
+  "./grave/plastered_stone_wall_1k/plastered_stone_wall_diff_1k.webp"
 );
 graveColorTexture.colorSpace = THREE.SRGBColorSpace;
 
 const graveARMTexture = textuerLoader.load(
-  "./grave/plastered_stone_wall_1k/plastered_stone_wall_arm_1k.jpg"
+  "./grave/plastered_stone_wall_1k/plastered_stone_wall_arm_1k.webp"
 );
 
 const graveNormalTexture = textuerLoader.load(
-  "./grave/plastered_stone_wall_1k/plastered_stone_wall_nor_gl_1k.jpg"
+  "./grave/plastered_stone_wall_1k/plastered_stone_wall_nor_gl_1k.webp"
 );
 
 // 繰り返し設定 (Grave Textures)
