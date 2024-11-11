@@ -39,6 +39,7 @@ DepthWriteやDepthTestについて
 - [[Three.js] transparent再入門](https://qiita.com/masato_makino/items/ce57452196d480aaa203#前提--gpuの描画処理)
 
 - [ThreeJS PointMaterial texture transparent background issue](https://stackoverflow.com/questions/33830972/threejs-pointmaterial-texture-transparent-background-issue)
+
 ---
 
 ### Alpha Test
@@ -165,7 +166,9 @@ DepthWriteやDepthTestについて
 
     <br>
 
-    - 結果: 非透明なオブジェクトの後ろにあるはずのパーティクルが画面に描画されてしまう
+    結果
+    
+    - 非透明なオブジェクトの後ろにあるはずのパーティクルが描画されてしまう
 
     <img src="./img/Depth-Test_2.gif" />
 
@@ -190,9 +193,56 @@ Three.js でのオブジェクトの描画順について
 
 - Depth Test = Depth Write + Comparison of Depth のイメージ
 
-- ★ Depth Write を OFF にすると、`オブジェクトの描画時の深度バッファへの書き込み` は OFF になるが、 `オブジェクト描画時に対応するピクセルの深度バッファに記録されている値との比較` は ON のまま
+- ★ Depth Write を OFF にすると、`オブジェクトの描画時の深度バッファへの書き込み` は OFF になるが、`オブジェクト描画時に対応するピクセルの深度バッファに記録されている値との比較` は ON のまま
+
+    ```js
+    const particleMatrial = new THREE.PointsMaterial({
+            alpha: alphaMapTexture,
+            depthWrite: false, // ★DepthWrite をオフにする = このマテリアルのオブジェクトは深度バッファへの書き込みは行わないが,他のオブジェクトとの重なっているのは判断する
+        });
+    ```
+
+    <br>
+
+    結果
+
+     - [半透明なパーティクル同士の重なりの問題](#transparent-なオブジェクトの重なりで起こりうる問題)が解消
+
+     - [DepthTest をOFFにした時の問題](#注意点-1)も解消
+
+    <img src="./img/Depth-Write_1.gif" />
 
 <br>
 <br>
 
 #### 注意点
+
+- 他の deptWrite が無効のマテリアルを使ったオブジェクトがある場合、前後関係無く両方のオブジェクが描画されることに注意
+
+    ```js
+    // depthWrite が無効のボックスオブジェクトを追加
+    const box = new THREE.Mesh(
+        new THREE.BoxGeometry(1, 1, 1),
+        new THREE.MeshBasicMaterial({ depthWrite: false }) //depthWrite を無効にする
+    );
+    scene.add(box);
+
+    // bufferGeometryを利用したパーティクルのジオメトリの作成は省略
+    
+    // PointsMaterial の作成
+    const particleMatrial = new THREE.PointsMaterial({
+        alpha: alphaMapTexture,
+        depthWrite: false, // ★depthWrite を OFF
+    });
+
+    // 半透明なパーティクルをシーンに追加
+    scene.add(new THREE.Points(particleGeometry, particleMaterial));
+    ```
+
+    <img src="./img/Depth-Write_2.gif" />
+    
+    <br>
+
+    - 原因は以下の通り
+
+    <img src="./img/Depth-Write_3.png" />    
