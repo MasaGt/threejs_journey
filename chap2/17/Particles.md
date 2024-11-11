@@ -262,3 +262,49 @@
 [Three.js備忘録（3）](https://koro-koro.com/threejs-no3/)
 
 [3Dゲーム開発#06】頂点カラーでポリゴンに色をつける](https://proglog.site/vertex-color/#toc3)
+
+---
+
+### パーティクルの形状を変える
+
+- 通常、パーティクルは正方形で描画される
+
+    <img src="./img/Particles_4.png" />
+
+- パーティクルの形を変えたい場合は alphaMapping を利用する必要がある
+
+<br>
+
+#### alphaMapping
+
+1. アルファマップテクスチャーを用意する
+
+    <img src="./img/Particles-Alphamap_1.png" />
+
+<br>
+
+2. テクスチャ画像をロードする
+
+    ```js
+    const textureLoader = new THREE.TextureLoader();
+
+    const alphaTexture = textureLoader.load("テクスチャ画像のパス");
+    ```
+
+<br>
+
+3. PointsMaterial の alpha プロパティにロードしたテクスチャを指定する
+
+    ```js
+    const particleMaterial = new THREE.PointsMaterial({
+        size: 0.2,
+        sizeAttenuation: true,
+        vertexColors: true,
+        transparent: true, // アルファマッピング利用時には true にする必要がある
+        alpha: alphaTexture, // アルファマッピングに利用するテクスチャの指定
+    });
+    ```
+
+<br>
+
+<img src="./img/Particles-Alphamap_2.png" />
