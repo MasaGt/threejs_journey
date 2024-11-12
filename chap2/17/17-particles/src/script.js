@@ -32,6 +32,14 @@ const alpha11 = textureLoader.load("./textures/particles/11.png");
 const alpha12 = textureLoader.load("./textures/particles/12.png");
 const alpha13 = textureLoader.load("./textures/particles/13.png");
 
+// Cube
+// scene.add(
+//   new THREE.Mesh(
+//     new THREE.BoxGeometry(1, 1, 1),
+//     new THREE.MeshBasicMaterial({ color: 0x00ff00, depthTest: false })
+//   )
+// );
+
 /**
  * Particles
  */
@@ -72,26 +80,30 @@ particlesGeometry.setAttribute("position", bufferAttribute);
 particlesGeometry.setAttribute("color", colorBufferAttribute);
 
 const particleMaterial = new THREE.PointsMaterial({
-  //   color: 0xff88cc,
+  // color: 0xff88cc,
   //   size: 0.02,
   //   sizeAttenuation: false,
   size: 0.5,
   sizeAttenuation: true,
-  // transparent: true,
-  // alphaMap: alpha5,
+  transparent: true,
+  alphaMap: alpha2,
   // alphaTest: 0.5,
 });
 // particleMaterial.depthTest = false;
-// particleMaterial.depthWrite = false;
+particleMaterial.depthWrite = false;
+particleMaterial.blending = THREE.AdditiveBlending;
 particleMaterial.vertexColors = true;
 const particle = new THREE.Points(particlesGeometry, particleMaterial);
 scene.add(particle);
+// console.log(particle.position);
+console.log(particlesGeometry.attributes);
+// particle.position.y = -5;
 
 // Cube
 // scene.add(
 //   new THREE.Mesh(
 //     new THREE.BoxGeometry(1, 1, 1),
-//     new THREE.MeshBasicMaterial({ wireframe: true })
+//     new THREE.MeshBasicMaterial({ depthWrite: false })
 //   )
 // );
 
@@ -149,6 +161,7 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+// renderer.setClearColor(0xffffff);
 
 /**
  * Animate
@@ -157,6 +170,20 @@ const clock = new THREE.Clock();
 
 const tick = () => {
   const elapsedTime = clock.getElapsedTime();
+
+  // Particle Mesh animation
+  // particle.rotation.y = elapsedTime * 0.2;
+  // particle.position.y = -elapsedTime * 0.2;
+
+  // Particle animation
+  for (let i = 0; i < numVertecies; i++) {
+    const yIndex = i * 3 + 1;
+    const xPosition = particlesGeometry.attributes.position.array[i * 3];
+    particlesGeometry.attributes.position.array[yIndex] = Math.sin(
+      elapsedTime * 0.8 + xPosition
+    );
+  }
+  particlesGeometry.attributes.position.needsUpdate = true;
 
   // Update controls
   controls.update();
