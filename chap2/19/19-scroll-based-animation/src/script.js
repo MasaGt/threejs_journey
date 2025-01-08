@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import GUI from "lil-gui";
+import { gsap } from "gsap";
 
 /**
  * Debug
@@ -89,7 +90,7 @@ const bufferGeometry = new THREE.BufferGeometry().setAttribute(
 const particles = new THREE.Points(
   bufferGeometry,
   new THREE.PointsMaterial({
-    size: 0.5,
+    size: 0.05,
     color: parameters.materialColor,
     sizeAttenuation: true,
   })
@@ -171,9 +172,25 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 /**
  * Scroll
  */
-// window.addEventListener("scroll", () => {
-//   cameraGroup.position.y = -(window.scrollY / sizes.height) * objectDistance;
-// });
+let currentSection = 0;
+window.addEventListener("scroll", () => {
+  // cameraGroup.position.y = -(window.scrollY / sizes.height) * objectDistance;
+
+  // current section check
+  const nextSection = Math.round(window.scrollY / sizes.height);
+
+  if (nextSection != currentSection) {
+    currentSection = nextSection;
+
+    // animation
+    gsap.to(sectionMeshes[currentSection].rotation, {
+      duration: 1.5,
+      ease: "power2.inOut",
+      x: "+=6",
+      y: "+=3",
+    });
+  }
+});
 
 console.log(window.innerHeight);
 
@@ -181,25 +198,27 @@ console.log(window.innerHeight);
  * Animate
  */
 const clock = new THREE.Clock();
+let previousTime = 0;
 
 const tick = () => {
   const elapsedTime = clock.getElapsedTime();
+  const deltaTime = elapsedTime - previousTime;
+  previousTime = elapsedTime;
 
   sectionMeshes.forEach((mesh) => {
-    // mesh.rotation.y = elapsedTime * 0.1;
-    // mesh.rotation.x = elapsedTime * 0.15;
+    mesh.rotation.y += deltaTime * 0.1;
+    mesh.rotation.x += deltaTime * 0.15;
   });
 
   // move camera group according to scroll
   cameraGroup.position.y = -(window.scrollY / sizes.height) * objectDistance;
+  // 下の2行は easing ver
+  // let targetPosition = -(window.scrollY / sizes.height) * objectDistance;
+  // cameraGroup.position.y += (targetPosition - cameraGroup.position.y) * 0.01;
 
-  // move camera according to mousemove
-  camera.position.x += (cursor.x - camera.position.x) * 0.01;
-  camera.position.y += (cursor.y - camera.position.y) * 0.01;
-  sectionMeshes.forEach((mesh) => {
-    // mesh.position.x += cursor.x * 0.01;
-    // mesh.position.y += cursor.y * 0.01;
-  });
+  // move camera with easing according to mousemove
+  camera.position.x += (cursor.x - camera.position.x) * 0.01 * deltaTime;
+  camera.position.y += (cursor.y - camera.position.y) * 0.01 * deltaTime;
 
   // Render
   renderer.render(scene, camera);
