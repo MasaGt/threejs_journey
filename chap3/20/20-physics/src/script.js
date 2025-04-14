@@ -8,6 +8,39 @@ import CANNON from "cannon";
  */
 const gui = new GUI();
 
+const debugObj = {
+  createSphere: () => {
+    createSphere(Math.random() * 0.5, {
+      x: (Math.random() - 0.5) * 3,
+      y: 3,
+      z: (Math.random() - 0.5) * 3,
+    });
+  },
+  createBox: () => {
+    createBox(Math.random(), Math.random(), Math.random(), {
+      x: (Math.random() - 0.5) * 3,
+      y: 3,
+      z: (Math.random() - 0.5) * 3,
+    });
+  },
+  reset: () => {
+    for (const obj of objectsToUpdate) {
+      // 物理空間中でのオブジェクトのイベントリスナーの削除
+      obj.body.removeEventListener("collide", collisionCheck);
+
+      // 物理空間からオブジェクトの削除
+      world.removeBody(obj.body);
+
+      // Scene から オブジェクトの削除
+      scene.remove(obj.mesh);
+    }
+    objectsToUpdate.splice(0, objectsToUpdate.length);
+  },
+};
+gui.add(debugObj, "createSphere");
+gui.add(debugObj, "createBox");
+gui.add(debugObj, "reset");
+
 /**
  * Base
  */
@@ -36,11 +69,29 @@ const environmentMapTexture = cubeTextureLoader.load([
 ]);
 
 /**
+ * Sound
+ */
+
+const hitSound = new Audio("/sounds/hit.mp3");
+
+const playHitSound = () => {
+  hitSound.currentTime = 0;
+  hitSound.volume = Math.random();
+  hitSound.play();
+};
+
+/**
  * Physics
  */
 // world
 const world = new CANNON.World();
 world.gravity.set(0, -9.82, 0);
+
+// 当たり判定アルゴリズムの変更
+world.broadphase = new CANNON.SAPBroadphase(world);
+
+// Sleep機能の有効化
+world.allowSleep = true;
 
 // Materials
 const defaultMaterial = new CANNON.Material("default");
@@ -54,20 +105,6 @@ const defaultContactMaterial = new CANNON.ContactMaterial(
 );
 world.defaultContactMaterial = defaultContactMaterial;
 
-// sphere
-const sphereShape = new CANNON.Sphere(0.5);
-const sphereBody = new CANNON.Body({
-  mass: 1,
-  position: new CANNON.Vec3(0, 3, 0),
-  shape: sphereShape,
-});
-// sphereに加える力(最初のみ)のシミュレーション
-sphereBody.applyLocalForce(
-  new CANNON.Vec3(250, 0, 0),
-  new CANNON.Vec3(0, 0, 0)
-);
-world.addBody(sphereBody);
-
 // Floor
 const floorShape = new CANNON.Plane();
 const floorBody = new CANNON.Body();
@@ -75,22 +112,6 @@ const floorBody = new CANNON.Body();
 floorBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI * 0.5);
 floorBody.addShape(floorShape);
 world.addBody(floorBody);
-
-/**
- * Test sphere
- */
-const sphere = new THREE.Mesh(
-  new THREE.SphereGeometry(0.5, 32, 32),
-  new THREE.MeshStandardMaterial({
-    metalness: 0.3,
-    roughness: 0.4,
-    envMap: environmentMapTexture,
-    envMapIntensity: 0.5,
-  })
-);
-sphere.castShadow = true;
-sphere.position.y = 0.5;
-scene.add(sphere);
 
 /**
  * Floor
@@ -177,6 +198,80 @@ renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 /**
+ * Utils
+ */
+const objectsToUpdate = [];
+
+const collisionCheck = (event) => {
+  const impact = event.contact.getImpactVelocityAlongNormal();
+  if (impact > 1.5) {
+    playHitSound();
+  }
+};
+
+// Box
+const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
+const boxMaterial = new THREE.MeshStandardMaterial({
+  metalness: 0.3,
+  roughness: 0.4,
+  envMap: environmentMapTexture,
+});
+
+const createBox = (w, h, d, position) => {
+  // Three.js Box
+  const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
+  boxMesh.position.copy(position);
+  boxMesh.scale.set(w, h, d);
+  boxMesh.castShadow = true;
+  scene.add(boxMesh);
+
+  // physics Box
+  const boxBody = new CANNON.Body({
+    mass: 1,
+    shape: new CANNON.Box(new CANNON.Vec3(w * 0.5, h * 0.5, d * 0.5)),
+  });
+  boxBody.position.copy(position);
+  world.addBody(boxBody);
+
+  // Cannon.js の Box にイベントリスナーを登録する
+  boxBody.addEventListener("collide", collisionCheck);
+
+  // add sphereMesh and sphereBoyd to sphere Array to udpdate in each frame
+  objectsToUpdate.push({ mesh: boxMesh, body: boxBody });
+};
+
+// Sphere
+const sphereGeometry = new THREE.SphereGeometry(1, 20, 20);
+const sphereMaterial = new THREE.MeshStandardMaterial({
+  metalness: 0.3,
+  roughness: 0.4,
+  envMap: environmentMapTexture,
+});
+
+const createSphere = (radisu, position) => {
+  // Three.js sphere
+  const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
+  sphereMesh.position.copy(position);
+  sphereMesh.scale.set(radisu, radisu, radisu);
+  sphereMesh.castShadow = true;
+  scene.add(sphereMesh);
+
+  // physics sphere
+  const sphereBody = new CANNON.Body({
+    mass: 1,
+    shape: new CANNON.Sphere(radisu),
+  });
+  sphereBody.position.copy(position);
+  world.addBody(sphereBody);
+
+  // Cannon.js の Sphere にイベントリスナーを登録する
+  sphereBody.addEventListener("collide", collisionCheck);
+
+  // add sphereMesh and sphereBoyd to sphere Array to udpdate in each frame
+  objectsToUpdate.push({ mesh: sphereMesh, body: sphereBody });
+};
+
+/**
  * Animate
  */
 const clock = new THREE.Clock();
@@ -190,17 +285,14 @@ const tick = () => {
   // Update controls
   controls.update();
 
-  // 風のシミュレーション
-  sphereBody.applyForce(new CANNON.Vec3(-1, 0, 0), sphereBody.position);
-
   // Update Physics World
   world.step(1 / 60, delta, 3);
 
-  // Update Objects accodring to Physics World
-  sphere.position.copy(sphereBody.position);
-  //   sphere.position.x = sphereBody.position.x;
-  //   sphere.position.y = sphereBody.position.y;
-  //   sphere.position.z = sphereBody.position.z;
+  // Update Spheres according to Physics World
+  objectsToUpdate.forEach((obj) => {
+    obj.mesh.position.copy(obj.body.position);
+    obj.mesh.quaternion.copy(obj.body.quaternion);
+  });
 
   // Render
   renderer.render(scene, camera);
