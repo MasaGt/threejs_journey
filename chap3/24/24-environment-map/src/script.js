@@ -4,6 +4,7 @@ import GUI from 'lil-gui'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 // import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { RGBELoader } from "three/addons/loaders/RGBELoader.js";
+import { EXRLoader } from "three/addons/loaders/EXRLoader.js";
 
 /**
  * Base
@@ -59,15 +60,39 @@ gltfLoader.load(
 // //シーン内の全てのオブジェクトに環境マップ(反射マッピング)を適用
 // scene.environment = cubeMap;
 
-// パノラママップ
-const hdrLoader = new RGBELoader();
-hdrLoader.load(
-    "/environmentMaps/0/2k.hdr",
+// パノラママップ (HDR)
+// const hdrLoader = new RGBELoader();
+// hdrLoader.load(
+//     // "/environmentMaps/0/2k.hdr",
+//     // "/environmentMaps/blender-envmap-2k.hdr",
+//     "/environmentMaps/test.hdr",
+//     (envMap) => {
+//         envMap.mapping = THREE.EquirectangularReflectionMapping;
+//         scene.environment = envMap;
+//         scene.background = envMap;
+//     }
+// );
+
+// パノラママップ (EXR)
+// const exrLoader = new EXRLoader();
+// exrLoader.load(
+//     "/environmentMaps/nvidiaCanvas-4k.exr",
+//     (envMap) => {
+//         envMap.mapping = THREE.EquirectangularReflectionMapping;
+//         scene.environment = envMap;
+//         scene.background = envMap;
+//     }
+// )
+
+// パノラママップ (jpeg)
+const textureLoader = new THREE.TextureLoader();
+const result = textureLoader.load(
+    "/environmentMaps/blockadesLabsSkybox/anime_art_style_japan_streets_with_cherry_blossom_.jpg",
     (envMap) => {
-        envMap.mapping = THREE.EquirectangularRefractionMapping;
+        envMap.colorSpace = THREE.SRGBColorSpace;
+        envMap.mapping = THREE.EquirectangularReflectionMapping;
         scene.environment = envMap;
         scene.background = envMap;
-        scene.backgroundRotation.y = Math.PI;
     }
 );
 
