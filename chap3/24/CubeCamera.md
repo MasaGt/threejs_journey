@@ -92,7 +92,6 @@
 
                         - イメージ的には EXR 対応のテクスチャを生成するための値と理解すれば OK
 
-
     <br>
 
     - `CubeCamera`
@@ -211,6 +210,99 @@
 
 ### レイヤー
 
+#### 概要
+
+- Three.js はイラストツールのように、レイヤー機能を提供している
+
+    <img src="./img/Layer-Concept_1.jpg" />
+
+    引用: [イラストツールのレイヤーとは？機能と活用方法を徹底解説](https://www.mouse-jp.co.jp/mouselabo/entry/2023/12/20/100023)
+
+    <br>
+
+    - ★Three.js では **Object3D オブジェクト**に0から31までの32個のレイヤーを割り当てることができる
+
+    - ★Three.js では Object3D オブジェクトは**デフォルトでレイヤー0に割り当てられている**
+
+<br>
+
+- ★★Camera はその[カメラが所属するレイヤーのみを写す](#レイヤーと-camera)
+
+<br>
+
+#### レイヤーの利用方法
+
+- ポイント
+
+    1. `Object3D.layers.enable(Number)`
+
+        - 対象の Object3D を引数で指定したレイヤーに所属させる
+
+            <img src="./img/Layer-Enable_1.svg" />
+
+    <br>
+    
+
+    2. `Object3D.layers.disable(Number)`
+
+        - 対象の Object3D を引数で指定したレイヤーから解約させる
+
+            <img src="./img/Layer-Disable_1.svg" />
+
+    <br>
+
+    3. `Object3D.layers.set(Number)`
+
+        - 対象の Object3D の所属レイヤーを引数で指定したレイヤーのみにする
+
+            <img src="./img/Layer-Set_1.svg" />
+
+<br>
+
+#### 以下のようなシーンをレイヤーを利用して作ってみる
+
+<img src="./img/CubeCaMera-Solution-Layer_1.svg" />
+
+<br>
+
+1. CubeCamera に写したいオブジェクトを Layer1 に追加する
+
+    <img src="./img/CubeCaMera-Solution-Layer_3.svg" />
+
+    <br>
+
+    - ★★★Group オブジェクト全体を Layer に追加するには、**Group オブジェクトに所属している個々のオブジェクトごとに layers.enable()** で Layer に追加してあげる必要がある
+
+        <img src="./img/CubeCaMera-Solution-Layer_2.svg" />
+
+<br>
+
+2. CubeCamer を Layer1 のみに所属させる
+
+    - 毎フレームごとに CubeCamera.update() を実行するを忘れずに
+
+   <img src="./img/CubeCaMera-Solution-Layer_4.svg" />
+
+<br>
+
+3. 意図した結果になっていることを確認
+
+    <img src="./img/CubeCaMera-Solution-Layer_5.gif" />
+
+<br>
+
+#### 注意点
+
+- 反射オブジェクトと CubeCamera の位置が遠いと、反射の見え方が不自然になる = CubeCamera からの視点でキューブ環境テクスチャを撮影&生成するため
+
+    - 基本的には [キューブカメラを反射するオブジェクトの位置に移動する](#キューブカメラを反射するオブジェクトの位置に移動する) 方法がベター
+
+<br>
+<br>
+
+参考サイト
+[【Three.js】一部のオブジェクトのみにPost Processingをかける](https://zenn.dev/dami/articles/5d9792736a4ffc)
+
 ---
 
 ### WebGLCubeRenderTarget の type プロパティ
@@ -240,3 +332,48 @@
     <img src="./img/MeshBasicMaterial-Color_1.svg" />
 
     - 詳しくは[こちら](./Materialとcolor.md)を参照
+
+<br>
+<br>
+
+参考サイト
+
+[HDRIとは ?](https://knowledge.shade3d.jp/knowledgebase/hdriとは)
+
+---
+
+### レイヤーと Camera
+
+- Camera は自身が所属するレイヤーのみを写す
+
+<br>
+
+- 以下の2つのオブジェクトのみのシンプルなシーンがあるとする
+
+    - 2つのオブジェクトはデフォルトの Layer0 のみに所属している
+
+    - Camera もデフォルトの Layer0 のみに所属している
+
+    <img src="./img/Camera-Layer_1.svg" />
+
+<br>
+
+#### 実験
+
+1. `Camera.layer.set(1)` を行うと
+
+    - Camera は何も写さなくなる = Camera は Layer1 のみに所属し、緑のオブジェクトと赤のオブジェクトは Layer1 に所属していないから
+    
+    <img src="./img/Camera-Layer_2.svg" />
+
+<br>
+
+2. 以下のコードを実行し、「緑のオブジェクトは Layer2 のみに所属」、「赤のオブジェクトは Layer3 のみに所属」、「Camera は Layer2, Layer3 にも所属」 の状況を作る
+
+    <img src="./img/Camera-Layer_3.svg" />
+
+    <br>
+
+    - 結果: カメラは緑と赤のオブジェクト両方を写すようになる = Camera は自身が所属しているすべての Layer を写すから
+
+    <img src="./img/Camera-Layer_4.svg" />
