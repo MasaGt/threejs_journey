@@ -185,7 +185,7 @@ const tick = () => {
     requestAnimationFrame(tick);
 }
 
-requestAnimationFrame(tick);
+tick();
 ```
 
 #### 注意点
@@ -231,6 +231,8 @@ const tick = () => {
 
     // 60FPSでも30FPSでも関係なく1秒間にx軸方向に1進む
     mesh.position.x = elapsedTime;
+
+    requestAnimationFrame(tick);
 }
 
 tick();
@@ -251,6 +253,8 @@ const tick = () => {
 
     // 1秒経ったら、 1*2π = 2πで1回転する
     mesh.rotate.y = elapsedTime * Math.PI * 2;
+
+    requestAnimationFrame(tick);
 }
 
 tick();
@@ -286,13 +290,13 @@ tick();
 
     const tick = () => {
         let current = Date.now();
-        let delta = current = time;
+        let delta = current - time;
         time = curent;
 
-        // Move to positive X
+        // X軸方向に一定の速度(どのFPSでも同じ)
         mesh.position.x = delta;
 
-        requestAnimationFrame();
+        requestAnimationFrame(tick);
     }
 
     tick();
