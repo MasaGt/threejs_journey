@@ -67,8 +67,20 @@ Bounding Box を使ってオブジェクトの中心を原点(0,0,0)に移動し
     
     - X軸方向の移動量の計算
 
+        - geometry.boundingBox.max.x
+
+            - boudingBox の幅の最大値 (≒右端の座標)
+
+        <br>
+
+        - geometry.boundingBox.min.x
+
+            - boudingBox の幅の最小値 (≒左端の座標)
+
+        <br>
+        
         ```js
-        const moveX = geometry.boundingBox.max.x - Math.abs(geometry.boundingBox.min.x);
+        const moveX = (geometry.boundingBox.max.x - Math.abs(geometry.boundingBox.min.x))/2;
         ```
 
         <img src="./img/Translate-X_1.png" />
@@ -77,8 +89,20 @@ Bounding Box を使ってオブジェクトの中心を原点(0,0,0)に移動し
     
     - Y軸方向の移動量の計算
 
+        - geometry.boundingBox.max.y
+
+            - boudingBox の高さの最大値 (≒上端の座標)
+
+        <br>
+
+        - geometry.boundingBox.min.y
+
+            - boudingBox の高さの最小値 (≒下端の座標)
+
+        <br>
+
         ```js
-        const moveY = geometry.boundingBox.max.y - Math.abs(geometry.boundingBox.min.y);
+        const moveY = (geometry.boundingBox.max.y - Math.abs(geometry.boundingBox.min.y))/2;
         ```
 
         <img src="./img/Translate-Y_1.png" />
@@ -87,8 +111,20 @@ Bounding Box を使ってオブジェクトの中心を原点(0,0,0)に移動し
 
     - Z軸方向の移動量の計算
 
+        - geometry.boundingBox.max.z
+
+            - boudingBox の幅の最大値 (≒手前端の座標)
+
+        <br>
+
+        - geometry.boundingBox.min.z
+
+            - boudingBox の幅の最小値 (≒奥端の座標)
+        
+        <br>
+
         ```js
-        const moveZ = geometry.boundingBox.max.z - Math.abs(geometry.boundingBox.min.z);
+        const moveZ = (geometry.boundingBox.max.z - Math.abs(geometry.boundingBox.min.z))/2;
         ```
 
         <img src="./img/Translate-Z_1.png" />

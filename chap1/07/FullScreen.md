@@ -84,7 +84,7 @@
     window.addEventListner("resize", () => {
 
         // Update Camera
-        camera.aspect = sizes.width / sizes.height;
+        camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
 
         // Update Scene

@@ -184,11 +184,11 @@ texture.colorSpace = THREE.SRGBColorSpace;
     ```js
     const loader = new THREE.TextureLoader();
 
-    const flowerTexture = loader("花の画像のパス");
+    const flowerTexture = loader.load("花の画像のパス");
 
-    const catTexture = loader("猫の画像のパス");
+    const catTexture = loader.load("猫の画像のパス");
 
-    const pizzaTexture = loader("ピザの画像のパス");
+    const pizzaTexture = loader.load("ピザの画像のパス");
     ```
 
 <br>

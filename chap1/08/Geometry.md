@@ -104,20 +104,22 @@ BufferAttribute
     - BufferGeometry へ BufferAttribute の渡し方
         - BufferGeometry.setAttribute() を利用する
             - 第一引数: Attribute名
-                - 頂点の位置情報のデータだったら `positions`
-                - uv座標のデータだったら `UVs`
-                - 法線データだったら `normals`
-                - 色データだったら `colors`
+                - 頂点の位置情報のデータだったら `position`
+                - uv座標のデータだったら `UV`
+                - 法線データだったら `normal`
+                - 色データだったら `color`
 
             - 第二引数: BufferAttribute
 
     ```js
     // BufferAttributeは作成ずみ
     const geometry = new THREE.BufferGeometry();
-    // 今回は頂点の位置情報(座標)を渡すので Attribute名は positions
-    geometry.setAttribute("positions", positionAttr);
+    // 今回は頂点の位置情報(座標)を渡すので Attribute名は position
+    geometry.setAttribute("position", positionAttr);
 
-    mesh.add(geometry, material);
+    const mesh = new THREE.Mesh(geometry, material);
+
+    scene.add(mesh);
     ```
 
     - 結果: 自分で作成した3点の頂点からジオメトリーが形成された
@@ -214,7 +216,7 @@ BufferAttribute
 
 ---
 
-### BufferGeometry　の実験
+### BufferGeometry の実験
 
 - 4つの頂点データを渡すとどうなるか
 

@@ -48,7 +48,7 @@
 
     - MeshBasicMaterial インスタンスのプロパティで指定する場合
         - Three.js の Color クラスを作成する必要がある
-            - Color クラスのコンストラクターズ引数には、"red" や "#00ff00", 0x0000ff などの方法で色の指定が可能
+            - Color クラスのコンストラクタ引数には、"red" や "#00ff00", 0x0000ff などの方法で色の指定が可能
 
     ```js
     const material = new THREE.MeshBasicMaterial();

@@ -44,7 +44,7 @@
         //間違ったコード → font インスタンスをそのまま渡している
         const TextGeometry("Hello!", font);
 
-        // 正しいコード → font インスタンスをオブジェクトに入れている
+        //正しいコード → font インスタンスをオブジェクトに入れている
         const TextGeometry("Hello!", { font });
     })
     ```
@@ -64,13 +64,13 @@
 
 - json 形式の typeface ファイルを読み込むためのクラス
 
-- json形式しかサポートしていない
+- json 形式しかサポートしていない
     - (google フォントなどでダウンロードできる) 多くの typeface のファイル形式は ttf
 
     - ttf を [Facetype.js](http://gero3.github.io/facetype.js/) にて json に変換することで google フォントからダウンロードした typeface ファイルを Three.js で利用することができる
 
 - typeface 用であること以外は基本的に他の Loader系クラス と同じような使用感
-    - FontLoader のload 関数はFontインスタンスをリターンしないことに注意すること
+    - FontLoader の load 関数は Font インスタンスをリターンしないことに注意すること
 
 #### 利用方法
 
@@ -237,7 +237,7 @@ Font
 - bevelSize (float)
     - bevel の大きさ
     - 正の値を指定すると、文字のアウトラインから外側に bevel する
-    - 負の値を設定すると、文字のアウトラインから外側に bevel する
+    - 負の値を設定すると、文字のアウトラインから内側に bevel する
     - *bevelSize を(正の値で)指定すると、sizeで指定したサイズよりもオブジェクトが大きくなってしまうので注意
 
     <img src="./img/TextGeometry-BevelSize_1.png" />
@@ -248,7 +248,7 @@ Font
 - bevelThickness (float)
     - bevel の厚さ
     - 正の値を指定すると文字の外側に突き出るような見た目になる
-    - 負の値を指定すると文字の外側にに引っ込むようなような見た目になる
+    - 負の値を指定すると文字の内側にに引っ込むようなような見た目になる
     - *bevelThickness を(正の値で)指定すると、depthで指定した文字の厚さよりもオブジェクトが厚くなってしまうので注意
 
     <img src="./img/TextGeometry-BevelThickness_1.png" />

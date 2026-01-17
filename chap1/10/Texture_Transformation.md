@@ -1,6 +1,12 @@
 ### Texture の変形
 
-- 
+以下の Texture クラスのプロパティを操作することで、Texture を変形させることができる
+
+- [repeat](#repeat)
+
+- [offset](#offset)
+
+- [rotation](#rotation)
 
 ---
 
@@ -23,7 +29,7 @@
 
     <br>
 
-    - プロパティへの設定値
+    - 上記プロパティへの設定値
 
         - THREE.RepeatWrapping: テクスチャが繰り返される
 

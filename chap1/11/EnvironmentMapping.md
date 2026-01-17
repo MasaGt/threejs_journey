@@ -182,7 +182,7 @@ HDR について
             import * as THREE from "three";
 
             // キューブマップ用のローダー
-            const cubeTextureLoader = new THREE.CubeTextureLoader;
+            const cubeTextureLoader = new THREE.CubeTextureLoader();
             ```
 
         <br>

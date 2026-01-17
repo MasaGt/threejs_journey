@@ -277,10 +277,11 @@ Camera のコントロールである OrbitControls を使ってみる
 
 ### その他
 
-#### sceneを画面に収めたい
+#### scene を画面に収めたい
 
 #### カメラをオブジェクト周りでぐるぐる回転させたい
 
+#### OrthographicCamera の使い方
 
 <br>
 <br>
@@ -288,3 +289,5 @@ Camera のコントロールである OrbitControls を使ってみる
 参考サイト
 
 [【Three.js】画面からはみ出す問題について考える](https://blog.design-nkt.com/osyare-threejs3/)
+
+[【Three.js】カメラの距離を調節してWebGL座標をwindow座標（px）に合わせる](https://kakechimaru.com/three_px/)
