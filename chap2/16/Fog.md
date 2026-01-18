@@ -30,7 +30,7 @@ Three.js で利用できるビルトイン霧
 
 2. シーンに Fog インスタンスを追加する
 
-    - `Scene.add()` で追加するのではなく、 `Scene.fog` に Fog インスタンスを指定する
+    - ★`Scene.add()` で追加するのではなく、 `Scene.fog` に Fog インスタンスを指定する
 
     ```js
     scnece.fog = fog;
@@ -50,7 +50,7 @@ Three.js で利用できるビルトイン霧
 
 ---
 
-### Three.js での　FogExp2 の利用方法
+### Three.js での FogExp2 の利用方法
 
 1. Three.FogExp2 クラスのインスタンスを作成する
 

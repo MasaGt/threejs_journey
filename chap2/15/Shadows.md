@@ -99,7 +99,7 @@ Three.jsでは以下のライトが Drop Shadow を落とせる
 
     - [こちら](#影が落とされる仕組み--shadow-mapping)でいう手順2でレンダラーがシャドウマップを利用していることがわかる
 
-    - Rendere インスタンスのshadowMap.enabled プロパティに true を設定する
+    - Rendere インスタンスの shadowMap.enabled プロパティに true を設定する
 
     ```js
     rendere.shadowMap.enabled = true;
@@ -113,7 +113,7 @@ Three.jsでは以下のライトが Drop Shadow を落とせる
 
     <br>
 
-    - Drop Shadow を落とすオブジェクトには、 `castShadow = true` を設定する
+    - Drop Shadow を落とすオブジェクトには、`castShadow = true` を設定する
 
         ```js
         sphereObj.castShadow = true;
@@ -190,9 +190,9 @@ Three.jsでは以下のライトが Drop Shadow を落とせる
 
 - シャドウマップを作成する視点となるライトカメラを修正することで、シャドウマップの精度を上げることができる
 
-    - ライトカメラのnearがオブジェクトから遠いとシャドウマップに小さく描画される
+    - ライトカメラの near がオブジェクトから遠いとシャドウマップに小さく描画される
 
-        - シャドウマップにオブジェクトが小さく描画されると、影がテクスチャマッピングの時にチラつく = ジャぎる (理由は[こちら](../../chap1/10/Mipmap_TextureFiltering.md)を参照)
+        - シャドウマップにオブジェクトが小さく描画されると、影がテクスチャマッピングの時にチラつく = ジャぎる (理由は[こちら](https://github.com/MasaGt/threejs_journey/blob/5ceb857e86af47d63e779a05e0984879b1c680a7/chap1/10/Mipmap_TextureFiltering.md)を参照)
 
     <img src="./img/Optimizing-Shadows_3.png" />
 
@@ -294,6 +294,7 @@ Three.jsでは以下のライトが Drop Shadow を落とせる
     ```js
     // Light camera Debug
     const cameraDebug = gui.addFolder("Light Camera");
+    // Light cameraと camera helperを更新する関数
     const updateLightCamera = () => {
     directionalLight.shadow.camera.updateProjectionMatrix();
     cameraHelper.update();

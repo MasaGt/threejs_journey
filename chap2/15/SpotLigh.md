@@ -42,7 +42,7 @@
     
     以下の比較をしてみる
 
-    - SpotLightHelperを使って可視化する Spot Light の範囲
+    - SpotLightHelper を使って可視化する Spot Light の範囲
 
     - CameraHelper を使って可視化する Spot Light のライトカメラの範囲
 
@@ -55,7 +55,6 @@
     // Spot Light の可視化
     const spotLightHelper = new THREE.SpotLightHelper(spotLight, 0x00ff00);
     scene.add(spotLightHelper);
-
 
     // Spot Light のライトカメラの可視化
     const spotLightCameraHelper = new THREE.CameraHelper(spotLight.shadow.camera);
@@ -72,7 +71,7 @@
 
     - Spot Light のライトカメラの fov のデフォルトは 50°
 
-    - Spot Light の angleのデフォルトは Math.PI / 3 (= 1.047 = 120°)
+    - Spot Light の angle のデフォルトは Math.PI / 3 (= 1.047 = 120°)
 
     - ★上記ライトカメラの fov は最終的に内部(たぶんレンダラーがレンダリングする直前)で Spot Light の angle に上書かれる
         - しかし、カメラヘルパーは上書かれる前のライトカメラの fov を元にオレンジのガイド枠をシーンに描画するため、カメラヘルパーとスポットライトヘルパーで異なって見える
@@ -81,7 +80,7 @@
 
 <br>
 
-- もし、カメラヘルパーとライトヘルパーを合わせたければ SpotLight インスタンスの `shadow.updateupdateMatrices()` に SpotLightインスタンスを渡せば直る
+- もし、カメラヘルパーとライトヘルパーを合わせたければ SpotLight インスタンスの `shadow.updateupdateMatrices()` に SpotLight インスタンスを渡せば直る
 
     ```js
     // Spot Light の追加
@@ -135,8 +134,8 @@
 
 <br>
 
-- Spot Light の shadow.mapSize の　width と height が設定されている場合
-    - ライトカメラの aspect は Spot Light の shadow.mapSize の　width と height の比率に固定される
+- Spot Light の shadow.mapSize の width と height が設定されている場合
+    - ライトカメラの aspect は Spot Light の shadow.mapSize の width と height の比率に固定される
 
 <br>
 <br>

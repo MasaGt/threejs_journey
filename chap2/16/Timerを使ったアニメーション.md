@@ -28,12 +28,14 @@
 
 - getElapsedTIme() で Timer インスタンスの作成からの経過時間を取得することができる
 
-- getDeltaTime() で 前回読んだgetDeltaTime() からの経過時間を取得することができる
+- getDeltaTime() で前回呼び出した getDeltaTime() からの経過時間を取得することができる
 
-- ★getDeltaTime() や getDeltaTime() を実行する前に Timer.update() を自前で呼ぶ必要がある
-    - Timer.update() を呼ぶことにより、 Timer インスタンスの内部の値が更新され getElapsedTime() や getDeltaTime() の値が正しく取得できるようになる
+- ★getElapsedTIme() や getDeltaTime() を実行する前に Timer.update() を自前で呼ぶ必要がある
+
+    - Timer.update() を呼ぶことにより、Timer インスタンスの内部の値が更新され getElapsedTime() や getDeltaTime() の値が正しく取得できるようになる
 
     - もし、Timer.update() を呼ばなかったら...
+    
         - Timer インスタンスの内部の値が変更されないため、 getElapsedTime() や getDeltaTime() が同じ値を返し続ける
 
 <br>
@@ -64,7 +66,7 @@ animate();
 
 - Timer はタブが非アクティブの時に止まるらしい
 
-- 一方で　Clock はタブが非アクティブの時でも止まらないらしい
+- 一方で Clock はタブが非アクティブの時でも止まらないらしい
 
 - よって、ユーザーがアニメーションの途中でタブを非アクティブにし、しばらく経ってから戻ってきたらアニメーションがめっちゃ進んでたり、終わってたりする状況が Clock では起きる可能性がある
 
@@ -77,6 +79,7 @@ animate();
  * Animate
  */
 const clock = new THREE.Clock();
+const timer = new THREE.Timer();
 
 const tick = () => {
 

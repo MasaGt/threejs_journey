@@ -2,7 +2,7 @@
 
 - 3D 空間に配置する光源
 
-- PBR マテリアルなどは Light がないと見えない
+- PBR マテリアルなどは Light が無いと見えない
 
 - 様々な種類のライトが Three.js から提供されている
 
@@ -16,7 +16,7 @@
 
 - 3D空間全体に均等に光を当てるライト
 
-- 影や陰影できない
+- **影や陰影ができない**
 
 #### Ambient Light をシーンに追加する
 
@@ -223,9 +223,13 @@ directionalLight.target = target;
 
             <img src="./img/Point-Light_3.gif" />
 
-    ```js
-    const pointLight = new THREE.PointLight(0xffffff, 1, 0, 2);
-    ```
+    <br>
+
+    - サンプルライトの作成
+
+        ```js
+        const pointLight = new THREE.PointLight(0xffffff, 1, 0, 2);
+        ```
 
 <br>
 
@@ -280,9 +284,11 @@ directionalLight.target = target;
 
     <br>
 
-    ```js
-    const rectAreaLight = new THREE.RectAreaLight(0xffffff, 1, 1, 1);
-    ```
+    - サンプルライトの作成
+
+        ```js
+        const rectAreaLight = new THREE.RectAreaLight(0xffffff, 1, 1, 1);
+        ```
 
     <br>
 
@@ -435,15 +441,19 @@ RectAreaLight の向きを変える
 
         <img src="./img/Spot-Light_3.png" />
 
-    ```js
-    const spotLight = new THREE.SpotLight(
-        0x00ff00,
-        5,
-        5,
-        Math.PI * 0.1,
-        0.25,
-        1);
-    ```
+    <br>
+
+    - サンプルライトの作成
+        
+        ```js
+        const spotLight = new THREE.SpotLight(
+            0x00ff00,
+            5,
+            5,
+            Math.PI * 0.1,
+            0.25,
+            1);
+        ```
 
 <br>
 
@@ -486,7 +496,7 @@ RectAreaLight の向きを変える
 
 SpotLightHelper を使う際の注意点
 
-- SpotLightHelper インスタンスをシーンに追加以降、 spotLight の位置や向きなどを変更した場合、 SpotLightHelper インスタンスを update() で更新する必要がある
+- SpotLightHelper インスタンスをシーンに追加以降、spotLight の位置や向きなどを変更した場合、SpotLightHelper インスタンスを update() で更新する必要がある
 
     ```js
     // SpotLightHelperの更新を忘れた場合
@@ -584,7 +594,7 @@ SpotLightHelper を使う際の注意点
 
 - 基本的に Light は処理の重いオブジェクト
 
-- 処理の重さ的には、 Ambient Light などが一番軽く、 Point Light などが一番重い
+- 処理の重さ的には、Ambient Light などが一番軽く、Point Light などが一番重い
 
     Ambient Light, Hemisphere Light \< Directional Light, Point Light \< Spot Light, Rect Area Light
 

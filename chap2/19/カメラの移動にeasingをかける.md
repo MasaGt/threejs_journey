@@ -124,7 +124,7 @@ const tick = () => {
    *  ★スクロールに合わせてカメラを移動する (easing)
    */
   // 到達地点の計算
-  let targetPosition = -(window.scrollY / sizes.height) * objectDistance;
+  let targetPosition = -(window.scrollY / window.innerHeight) * objectDistance;
 
   // ★★距離の計算
   let distance = targetPosition - camera.position.y;
@@ -187,7 +187,7 @@ tick();
      *  ★スクロールに合わせてカメラを移動する (easing)
      */
     // 到達地点の計算
-    let targetPosition = -(window.scrollY / sizes.height) * objectDistance;
+    let targetPosition = -(window.scrollY / window.innerHeight) * objectDistance;
 
     // ★★距離の計算
     let distance = targetPosition - camera.position.y;

@@ -123,7 +123,7 @@
 
 ### DisplacementBias
 
-- DisplacementMappingが適用された頂点全体の位置を調整するプロパティ
+- DisplacementMapping が適用された頂点全体の位置を調整するプロパティ
 
 <br>
 

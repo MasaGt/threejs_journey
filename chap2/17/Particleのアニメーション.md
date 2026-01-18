@@ -129,12 +129,12 @@ scene.add(particle);
             // attributes.position の y座標要素のインデックス
             const yIndex = i * 3 + 1;
 
-            // attributes.position の y座標要素の値
+            // attributes.position の x座標要素の値
             const xPosition = particlesGeometry.attributes.position.array[i * 3];
 
-            // 各パーティクルのy座標を変更
+            // 各パーティクルのy座標を変更 (x座標を計算に加えることで、それぞれのパーティクルの位置から波状に動いているように見える)
             particlesGeometry.attributes.position.array[yIndex] = Math.sin(
-              elapsedTime * 0.8 + xPosition
+              elapsedTime * 0.8 + xPosition //もしｘPositionを足さない場合、すべてのパーティクルが同じyポジションで動く
             );
           }
 
